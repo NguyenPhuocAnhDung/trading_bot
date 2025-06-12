@@ -14,7 +14,7 @@ import numpy as np
 logger = logging.getLogger('trading')
 
 class TradingBot:
-    def __init__(self):
+    def __init__(self) -> None:
         api_key = os.getenv('BINANCE_API_KEY')
         api_secret = os.getenv('BINANCE_API_SECRET')
         
@@ -67,7 +67,7 @@ class TradingBot:
         
         logger.info("Trading bot initialized")
     
-    def reset_daily_loss(self):
+    def reset_daily_loss(self) -> None:
         """Reset daily loss counter if it's a new day"""
         current_day = datetime.now().day
         if current_day != self.last_reset_day:
@@ -75,7 +75,7 @@ class TradingBot:
             self.last_reset_day = current_day
             logger.info("Daily loss counter reset")
     
-    def update_risk_parameters(self, max_risk_per_trade=None, max_daily_loss=None, trailing_stop_percent=None):
+    def update_risk_parameters(self, max_risk_per_trade=None, max_daily_loss=None, trailing_stop_percent=None) -> None:
         """Update risk management parameters"""
         if max_risk_per_trade is not None:
             self.max_risk_per_trade = max_risk_per_trade
@@ -89,7 +89,7 @@ class TradingBot:
             self.trailing_stop_percent = trailing_stop_percent
             logger.info(f"Trailing stop percent updated to {trailing_stop_percent * 100}%")
             
-    def get_account_balance(self, exchange='binance'):
+    def get_account_balance(self, exchange='binance') -> list[dict[str, str]] | list[Unknown] | None:
         """Get account balance for all assets with non-zero balance"""
         self.reset_daily_loss()
         
@@ -135,7 +135,7 @@ class TradingBot:
             logger.error(traceback.format_exc())
             return None
     
-    def get_price(self, symbol, exchange='binance'):
+    def get_price(self, symbol, exchange='binance') -> str | Unknown | Unknown | None:
         """Get current price for a symbol"""
         logger.info(f"get_price called for {symbol} on {exchange}")
         
@@ -178,7 +178,7 @@ class TradingBot:
             logger.error(f"Error getting price for {symbol} via CCXT: {str(e)}")
             return None
     
-    def get_market_data(self, symbol, interval, limit=100, exchange='binance'):
+    def get_market_data(self, symbol, interval, limit=100, exchange='binance') -> DataFrame | None:
         """Get historical market data"""
         try:
             if exchange.lower() == 'binance' and self.client:

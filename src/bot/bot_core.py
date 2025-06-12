@@ -27,7 +27,7 @@ class TradingBotCore(commands.Bot):
     Enhanced Discord Trading Bot with professional architecture
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         # Load configuration
         self.config = get_config()
         
@@ -67,7 +67,7 @@ class TradingBotCore(commands.Bot):
         
         self._setup_logging()
         
-    def _setup_logging(self):
+    def _setup_logging(self) -> None:
         """Setup logging configuration"""
         logging.basicConfig(
             level=getattr(logging, self.config.logging_level.upper()),
@@ -78,7 +78,7 @@ class TradingBotCore(commands.Bot):
             ]
         )
         
-    async def setup_hook(self):
+    async def setup_hook(self) -> Coroutine[Unknown, Unknown, None]:
         """Setup hook called when bot is starting"""
         logger.info("Setting up Discord Trading Bot...")
         
@@ -103,7 +103,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Error during bot setup: {e}")
             logger.error(traceback.format_exc())
             
-    async def _initialize_trading_components(self):
+    async def _initialize_trading_components(self) -> Coroutine[Unknown, Unknown, None]:
         """Initialize trading-related components"""
         try:
             # Initialize exchange client
@@ -148,7 +148,7 @@ class TradingBotCore(commands.Bot):
             logger.error(traceback.format_exc())
             raise
             
-    async def _load_cogs(self):
+    async def _load_cogs(self) -> Coroutine[Unknown, Unknown, None]:
         """Load available cogs"""
         try:
             cog_modules = [
@@ -211,7 +211,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Error loading cogs: {e}")
             logger.error(traceback.format_exc())
                 
-    def _start_background_tasks(self):
+    def _start_background_tasks(self) -> None:
         """Start background monitoring tasks"""
         if not self.heartbeat_task.is_running():
             self.heartbeat_task.start()
@@ -221,7 +221,7 @@ class TradingBotCore(commands.Bot):
             
         logger.info("Background tasks started")
         
-    async def on_ready(self):
+    async def on_ready(self) -> Coroutine[Unknown, Unknown, None]:
         """Called when bot is ready"""
         self._is_ready = True
         self.start_time = datetime.now()
@@ -238,14 +238,14 @@ class TradingBotCore(commands.Bot):
         )
         await self.change_presence(activity=activity)
         
-    async def on_command(self, ctx):
+    async def on_command(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Called before every command"""
         self.command_count += 1
         command_name = ctx.command.name if ctx.command else 'unknown'
         self.command_usage[command_name] = datetime.now()
         logger.info(f"Command executed: {ctx.command} by {ctx.author}")
         
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx, error) -> Coroutine[Unknown, Unknown, None]:
         """Global error handler"""
         self.error_count += 1
         
@@ -307,7 +307,7 @@ class TradingBotCore(commands.Bot):
             await ctx.send(embed=embed, delete_after=10)
             
     @tasks.loop(minutes=1)
-    async def heartbeat_task(self):
+    async def heartbeat_task(self) -> Coroutine[Unknown, Unknown, None]:
         """Heartbeat task to monitor bot health"""
         try:
             self.last_heartbeat = datetime.now()
@@ -321,7 +321,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Error in heartbeat task: {e}")
             
     @tasks.loop(minutes=5)
-    async def market_monitor_task(self):
+    async def market_monitor_task(self) -> Coroutine[Unknown, Unknown, None]:
         """Monitor market conditions and send alerts"""
         if not self.monitoring_enabled:
             return
@@ -339,7 +339,7 @@ class TradingBotCore(commands.Bot):
         except Exception as e:
             logger.error(f"Error in market monitor task: {e}")
             
-    async def _check_price_alerts(self, symbol: str, ticker: dict):
+    async def _check_price_alerts(self, symbol: str, ticker: dict) -> Coroutine[Unknown, Unknown, None]:
         """Check for price alerts and significant movements"""
         try:
             current_price = ticker['last']
@@ -447,7 +447,7 @@ class TradingBotCore(commands.Bot):
                 color=0xff0000
             )
             
-    async def send_signal_to_channel(self, signal_data: dict, channel_name: str = None):
+    async def send_signal_to_channel(self, signal_data: dict, channel_name: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Send trading signal to specified channel"""
         try:
             channel_name = channel_name or self.config.discord.signals_channel
@@ -484,7 +484,7 @@ class TradingBotCore(commands.Bot):
         inactive = [c for c in all_commands if c not in active]
         return active, inactive
         
-    async def sync_slash_commands(self, guild_id: int = None):
+    async def sync_slash_commands(self, guild_id: int = None) -> Coroutine[Unknown, Unknown, bool]:
         """Manually sync slash commands"""
         try:
             if guild_id:
@@ -501,7 +501,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Failed to sync slash commands: {e}")
             return False
 
-    async def shutdown(self):
+    async def shutdown(self) -> Coroutine[Unknown, Unknown, None]:
         """Gracefully shutdown the bot"""
         logger.info("Shutting down bot...")
         
@@ -521,7 +521,7 @@ class TradingBotCore(commands.Bot):
         await self.close()
         logger.info("Bot shutdown complete")
 
-    async def generate_chart(self, symbol: str, interval: str = '1d', limit: int = 30):
+    async def generate_chart(self, symbol: str, interval: str = '1d', limit: int = 30) -> Coroutine[Unknown, Unknown, BytesIO | None]:
         """Generate a price chart for a symbol"""
         try:
             logger.info(f"Generating chart for {symbol} on {interval} timeframe (limit: {limit})")
@@ -566,7 +566,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Error generating chart: {e}")
             return None
             
-    async def generate_strategy_chart(self, strategy: str, symbol: str, interval: str = '1d', limit: int = 30):
+    async def generate_strategy_chart(self, strategy: str, symbol: str, interval: str = '1d', limit: int = 30) -> Coroutine[Unknown, Unknown, BytesIO | None]:
         """Generate a strategy chart with indicators"""
         try:
             logger.info(f"Generating strategy chart for {symbol} with {strategy} strategy on {interval} timeframe")
@@ -618,7 +618,7 @@ class TradingBotCore(commands.Bot):
             logger.error(f"Error generating strategy chart: {e}")
             return None
 
-    async def get_market_data(self, symbol, interval, limit=100, exchange=None):
+    async def get_market_data(self, symbol, interval, limit=100, exchange=None) -> Coroutine[Unknown, Unknown, None]:
         logger.info(f"CORE_GM_DATA_ENTER: Attempting for {symbol}/{interval}. Bot instance ID: {id(self)}")
         """
         Get historical market data for a symbol
@@ -672,7 +672,7 @@ class TradingBotCore(commands.Bot):
         finally:
             logger.info(f"CORE_GM_DATA_EXIT: Exiting for {symbol}/{interval}. Bot instance ID: {id(self)}")
             
-    async def get_price(self, symbol, exchange=None):
+    async def get_price(self, symbol, exchange=None) -> Coroutine[Unknown, Unknown, float | None]:
         """
         Get current price for a symbol
         

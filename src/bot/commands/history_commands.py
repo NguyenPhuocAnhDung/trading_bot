@@ -2,7 +2,7 @@ import discord
 from discord import Embed
 from datetime import datetime
 
-async def order_history(ctx):
+async def order_history(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Display recent order history"""
     bot = ctx.bot
     history = bot.exchange_client.get_order_history()
@@ -19,7 +19,7 @@ async def order_history(ctx):
             )
     await ctx.send(embed=embed)
 
-async def active_commands(ctx):
+async def active_commands(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show commands that have been used"""
     bot = ctx.bot
     active, _ = bot.get_command_status()
@@ -27,7 +27,7 @@ async def active_commands(ctx):
     embed.description = ", ".join(active) if active else "None"
     await ctx.send(embed=embed)
 
-async def inactive_commands(ctx):
+async def inactive_commands(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show commands that exist but haven't been used"""
     bot = ctx.bot
     active, inactive = bot.get_command_status()
@@ -35,7 +35,7 @@ async def inactive_commands(ctx):
     embed.description = ", ".join(inactive) if inactive else "None"
     await ctx.send(embed=embed)
 
-async def status_commands(ctx):
+async def status_commands(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show all commands grouped by active and inactive"""
     bot = ctx.bot
     active, inactive = bot.get_command_status()

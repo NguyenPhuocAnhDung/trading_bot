@@ -15,7 +15,7 @@ class TestSignalToOrderIntegration:
     
     @pytest_asyncio.async_test
     async def test_complete_signal_to_execution_flow(self, redis_service, mock_trading_service, 
-                                                   order_matching_service, client):
+                                                   order_matching_service, client) -> Coroutine[Unknown, Unknown, None]:
         """Test complete flow from signal to order execution"""
         
         # Step 1: Create a pending order that matches the incoming signal
@@ -72,7 +72,7 @@ class TestSignalToOrderIntegration:
     
     @pytest_asyncio.async_test
     async def test_webhook_to_order_matching_integration(self, client, redis_service, 
-                                                       mock_trading_service):
+                                                       mock_trading_service) -> Coroutine[Unknown, Unknown, None]:
         """Test integration from webhook receipt to order matching"""
         
         # Create pending order first
@@ -113,7 +113,7 @@ class TestSignalToOrderIntegration:
     
     @pytest_asyncio.async_test
     async def test_multiple_orders_single_signal(self, redis_service, mock_trading_service,
-                                               order_matching_service):
+                                               order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test single signal matching multiple orders"""
         
         # Create multiple matching orders
@@ -160,7 +160,7 @@ class TestSignalToOrderIntegration:
     @pytest_asyncio.async_test
     async def test_order_with_take_profit_stop_loss_creation(self, redis_service, 
                                                            mock_trading_service,
-                                                           order_matching_service):
+                                                           order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test order execution creates TP/SL exit orders"""
         
         # Create order with TP/SL
@@ -215,7 +215,7 @@ class TestOrderMatchingLogic:
     """Integration tests for order matching logic"""
     
     @pytest_asyncio.async_test
-    async def test_signal_symbol_matching(self, order_matching_service, redis_service):
+    async def test_signal_symbol_matching(self, order_matching_service, redis_service) -> Coroutine[Unknown, Unknown, None]:
         """Test orders only match signals with same symbol"""
         
         # Create BTC order
@@ -241,7 +241,7 @@ class TestOrderMatchingLogic:
         assert matching_orders[0]["symbol"] == "BTCUSDT"
     
     @pytest_asyncio.async_test
-    async def test_signal_side_matching(self, order_matching_service, redis_service):
+    async def test_signal_side_matching(self, order_matching_service, redis_service) -> Coroutine[Unknown, Unknown, None]:
         """Test orders only match signals with compatible sides"""
         
         # Create buy order
@@ -269,7 +269,7 @@ class TestOrderMatchingLogic:
         assert not await order_matching_service.signal_matches_order(sell_signal, buy_order)
     
     @pytest_asyncio.async_test
-    async def test_strategy_specific_matching(self, order_matching_service, redis_service):
+    async def test_strategy_specific_matching(self, order_matching_service, redis_service) -> Coroutine[Unknown, Unknown, None]:
         """Test orders with strategy requirements only match specific signals"""
         
         # Create strategy-specific order
@@ -302,7 +302,7 @@ class TestErrorHandlingIntegration:
     
     @pytest_asyncio.async_test
     async def test_trading_service_failure_handling(self, redis_service, mock_trading_service,
-                                                   order_matching_service):
+                                                   order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test handling when trading service fails during execution"""
         
         # Create order
@@ -331,7 +331,7 @@ class TestErrorHandlingIntegration:
     
     @pytest_asyncio.async_test
     async def test_redis_connection_failure_handling(self, mock_trading_service, 
-                                                    order_matching_service):
+                                                    order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test handling when Redis connection fails"""
         
         # Create order matching service with failing Redis
@@ -348,7 +348,7 @@ class TestErrorHandlingIntegration:
     
     @pytest_asyncio.async_test
     async def test_partial_order_execution_failure(self, redis_service, mock_trading_service,
-                                                  order_matching_service):
+                                                  order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test handling partial execution failures"""
         
         # Create order
@@ -383,7 +383,7 @@ class TestConcurrencyIntegration:
     
     @pytest_asyncio.async_test
     async def test_concurrent_signal_processing(self, redis_service, mock_trading_service,
-                                              order_matching_service):
+                                              order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test processing multiple signals concurrently"""
         
         # Create multiple orders
@@ -431,7 +431,7 @@ class TestConcurrencyIntegration:
     
     @pytest_asyncio.async_test
     async def test_order_queue_stress_test(self, redis_service, mock_trading_service,
-                                         order_matching_service):
+                                         order_matching_service) -> Coroutine[Unknown, Unknown, None]:
         """Test order queue under stress with many orders"""
         
         # Create many orders

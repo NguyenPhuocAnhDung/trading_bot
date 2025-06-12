@@ -20,7 +20,7 @@ class ParameterOptimizer:
                 symbols: List[str] = None,
                 timeframe: str = '1h',
                 data_dir: str = 'data',
-                results_dir: str = 'results/optimizations'):
+                results_dir: str = 'results/optimizations') -> None:
         """
         Initialize the parameter optimizer.
         
@@ -294,7 +294,7 @@ class ParameterOptimizer:
             'symbols': list(symbol_results.keys())
         }
     
-    def _save_results(self, results: Dict[str, Any]):
+    def _save_results(self, results: Dict[str, Any]) -> None:
         """Save optimization results to file"""
         try:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

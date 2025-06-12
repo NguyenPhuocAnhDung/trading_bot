@@ -28,7 +28,7 @@ class MLOptimizer:
                 n_estimators: int = 100,
                 random_state: int = 42,
                 parameter_ranges: Dict[str, Tuple] = None,
-                feature_columns: List[str] = None):
+                feature_columns: List[str] = None) -> None:
         """
         Initialize the ML optimizer.
         
@@ -228,7 +228,7 @@ class MLOptimizer:
     def fit(self, 
            features: np.ndarray, 
            parameter_dicts: List[Dict[str, Any]], 
-           performance_scores: List[float]):
+           performance_scores: List[float]) -> None:
         """
         Fit the ML model to historical data.
         
@@ -285,7 +285,7 @@ class MLOptimizer:
     def _find_best_params_by_regime(self, 
                                   features: np.ndarray, 
                                   parameter_dicts: List[Dict[str, Any]], 
-                                  performance_scores: List[float]):
+                                  performance_scores: List[float]) -> None:
         """
         Find the best parameters for each market regime.
         

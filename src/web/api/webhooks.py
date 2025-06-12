@@ -53,7 +53,7 @@ async def receive_tradingview_webhook(
     signal: TradingViewSignal,
     background_tasks: BackgroundTasks,
     request: Request
-):
+) -> Coroutine[Unknown, Unknown, WebhookResponse]:
     """
     Receive TradingView webhook signal
     
@@ -99,7 +99,7 @@ async def receive_tradingview_webhook(
         logger.error(f"❌ Error processing TradingView webhook: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing webhook: {str(e)}")
 
-async def process_tradingview_signal(signal_data: Dict[str, Any], signal_id: str):
+async def process_tradingview_signal(signal_data: Dict[str, Any], signal_id: str) -> Coroutine[Unknown, Unknown, None]:
     """Process TradingView signal for order matching"""
     try:
         logger.info(f"🔄 Processing TradingView signal {signal_id}")
@@ -148,7 +148,7 @@ def verify_webhook_signature(request: Request, secret: str) -> bool:
         return False
 
 @webhook_router.get("/test")
-async def test_webhook():
+async def test_webhook() -> Coroutine[Unknown, Unknown, dict[str, str]]:
     """Test webhook endpoint"""
     return {
         "status": "online",

@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from src.web.main import run_server
 from src.config.config_loader import ConfigLoader
 
-def setup_logging():
+def setup_logging() -> None:
     """Setup logging configuration"""
     logging.basicConfig(
         level=logging.INFO,
@@ -26,7 +26,7 @@ def setup_logging():
         ]
     )
 
-def main():
+def main() -> None:
     """Main entry point"""
     parser = argparse.ArgumentParser(description='Trading HTTPS Server')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')

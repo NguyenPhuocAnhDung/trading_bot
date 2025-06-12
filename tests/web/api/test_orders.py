@@ -15,7 +15,7 @@ class TestOrderCreation:
     @patch('src.web.api.orders.redis_service')
     @patch('src.web.api.orders.process_new_order')
     def test_create_valid_order(self, mock_process, mock_redis_service, 
-                               client, sample_order_request):
+                               client, sample_order_request) -> None:
         """Test creating a valid order"""
         mock_redis_service.add_order.return_value = "order_123456"
         
@@ -27,7 +27,7 @@ class TestOrderCreation:
         TestUtils.assert_order_response(response_data, "queued")
         assert "order_123456" in response_data["order_id"]
     
-    def test_create_order_missing_required_fields(self, client):
+    def test_create_order_missing_required_fields(self, client) -> None:
         """Test creating order with missing required fields"""
         invalid_order = {
             "symbol": "BTCUSDT",
@@ -39,7 +39,7 @@ class TestOrderCreation:
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_create_order_invalid_side(self, client, sample_order_request):
+    def test_create_order_invalid_side(self, client, sample_order_request) -> None:
         """Test creating order with invalid side"""
         sample_order_request["side"] = "invalid_side"
         
@@ -47,7 +47,7 @@ class TestOrderCreation:
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_create_order_invalid_order_type(self, client, sample_order_request):
+    def test_create_order_invalid_order_type(self, client, sample_order_request) -> None:
         """Test creating order with invalid order type"""
         sample_order_request["order_type"] = "invalid_type"
         
@@ -55,7 +55,7 @@ class TestOrderCreation:
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_create_limit_order_without_price(self, client, sample_order_request):
+    def test_create_limit_order_without_price(self, client, sample_order_request) -> None:
         """Test creating limit order without price"""
         sample_order_request["order_type"] = "limit"
         sample_order_request["price"] = None
@@ -65,7 +65,7 @@ class TestOrderCreation:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Price required for limit orders" in response.json()["detail"]
     
-    def test_create_stop_order_without_stop_price(self, client, sample_order_request):
+    def test_create_stop_order_without_stop_price(self, client, sample_order_request) -> None:
         """Test creating stop order without stop price"""
         sample_order_request["order_type"] = "stop"
         sample_order_request["stop_price"] = None
@@ -75,7 +75,7 @@ class TestOrderCreation:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Stop price required for stop orders" in response.json()["detail"]
     
-    def test_create_order_negative_quantity(self, client, sample_order_request):
+    def test_create_order_negative_quantity(self, client, sample_order_request) -> None:
         """Test creating order with negative quantity"""
         sample_order_request["quantity"] = -0.1
         
@@ -84,7 +84,7 @@ class TestOrderCreation:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
     @patch('src.web.api.orders.redis_service', None)
-    def test_create_order_redis_unavailable(self, client, sample_order_request):
+    def test_create_order_redis_unavailable(self, client, sample_order_request) -> None:
         """Test creating order when Redis is unavailable"""
         response = client.post("/orders/create", json=sample_order_request)
         
@@ -95,7 +95,7 @@ class TestOrderStatus:
     """Test order status endpoints"""
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_order_status_success(self, mock_redis_service, client, sample_order_data):
+    def test_get_order_status_success(self, mock_redis_service, client, sample_order_data) -> None:
         """Test getting order status successfully"""
         mock_redis_service.get_order.return_value = sample_order_data
         
@@ -109,7 +109,7 @@ class TestOrderStatus:
         assert response_data["status"] == sample_order_data["status"]
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_order_status_not_found(self, mock_redis_service, client):
+    def test_get_order_status_not_found(self, mock_redis_service, client) -> None:
         """Test getting status for non-existent order"""
         mock_redis_service.get_order.return_value = None
         
@@ -119,7 +119,7 @@ class TestOrderStatus:
         assert "Order not found" in response.json()["detail"]
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_order_status_redis_error(self, mock_redis_service, client):
+    def test_get_order_status_redis_error(self, mock_redis_service, client) -> None:
         """Test getting order status when Redis fails"""
         mock_redis_service.get_order.side_effect = Exception("Redis error")
         
@@ -131,7 +131,7 @@ class TestUserOrders:
     """Test user order management endpoints"""
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_user_orders_success(self, mock_redis_service, client):
+    def test_get_user_orders_success(self, mock_redis_service, client) -> None:
         """Test getting user orders successfully"""
         user_orders = [
             TestDataGenerator.generate_order_data({"order_id": "order_1", "status": "executed"}),
@@ -149,7 +149,7 @@ class TestUserOrders:
         assert response_data["total"] == 2
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_user_orders_with_status_filter(self, mock_redis_service, client):
+    def test_get_user_orders_with_status_filter(self, mock_redis_service, client) -> None:
         """Test getting user orders with status filter"""
         all_orders = [
             TestDataGenerator.generate_order_data({"order_id": "order_1", "status": "executed"}),
@@ -168,7 +168,7 @@ class TestUserOrders:
             assert order["status"] == "executed"
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_user_orders_with_limit(self, mock_redis_service, client):
+    def test_get_user_orders_with_limit(self, mock_redis_service, client) -> None:
         """Test getting user orders with limit parameter"""
         mock_redis_service.get_user_orders.return_value = []
         
@@ -177,7 +177,7 @@ class TestUserOrders:
         assert response.status_code == status.HTTP_200_OK
         mock_redis_service.get_user_orders.assert_called_with("test_user_123", 25)
     
-    def test_get_user_orders_invalid_limit(self, client):
+    def test_get_user_orders_invalid_limit(self, client) -> None:
         """Test getting user orders with invalid limit"""
         # Limit too high
         response = client.get("/orders/user/test_user_123?limit=300")
@@ -191,7 +191,7 @@ class TestOrderCancellation:
     """Test order cancellation endpoints"""
     
     @patch('src.web.api.orders.redis_service')
-    def test_cancel_order_success(self, mock_redis_service, client):
+    def test_cancel_order_success(self, mock_redis_service, client) -> None:
         """Test successful order cancellation"""
         pending_order = TestDataGenerator.generate_order_data({"status": "pending"})
         mock_redis_service.get_order.return_value = pending_order
@@ -206,7 +206,7 @@ class TestOrderCancellation:
         assert "order_123456" in response_data["order_id"]
     
     @patch('src.web.api.orders.redis_service')
-    def test_cancel_order_not_found(self, mock_redis_service, client):
+    def test_cancel_order_not_found(self, mock_redis_service, client) -> None:
         """Test cancelling non-existent order"""
         mock_redis_service.get_order.return_value = None
         
@@ -216,7 +216,7 @@ class TestOrderCancellation:
         assert "Order not found" in response.json()["detail"]
     
     @patch('src.web.api.orders.redis_service')
-    def test_cancel_order_already_executed(self, mock_redis_service, client):
+    def test_cancel_order_already_executed(self, mock_redis_service, client) -> None:
         """Test cancelling already executed order"""
         executed_order = TestDataGenerator.generate_order_data({"status": "executed"})
         mock_redis_service.get_order.return_value = executed_order
@@ -227,7 +227,7 @@ class TestOrderCancellation:
         assert "Order cannot be cancelled" in response.json()["detail"]
     
     @patch('src.web.api.orders.redis_service')
-    def test_cancel_order_already_cancelled(self, mock_redis_service, client):
+    def test_cancel_order_already_cancelled(self, mock_redis_service, client) -> None:
         """Test cancelling already cancelled order"""
         cancelled_order = TestDataGenerator.generate_order_data({"status": "cancelled"})
         mock_redis_service.get_order.return_value = cancelled_order
@@ -241,7 +241,7 @@ class TestQueueStatistics:
     """Test queue statistics endpoints"""
     
     @patch('src.web.api.orders.redis_service')
-    def test_get_queue_stats_success(self, mock_redis_service, client):
+    def test_get_queue_stats_success(self, mock_redis_service, client) -> None:
         """Test getting queue statistics successfully"""
         mock_stats = {
             "pending_orders": 15,
@@ -264,7 +264,7 @@ class TestQueueStatistics:
         assert "timestamp" in response_data
     
     @patch('src.web.api.orders.redis_service', None)
-    def test_get_queue_stats_redis_unavailable(self, client):
+    def test_get_queue_stats_redis_unavailable(self, client) -> None:
         """Test getting queue stats when Redis is unavailable"""
         response = client.get("/orders/queue/stats")
         
@@ -274,7 +274,7 @@ class TestOrderProcessing:
     """Test order processing logic"""
     
     @pytest_asyncio.async_test
-    async def test_process_new_order_market_order(self, sample_order_request):
+    async def test_process_new_order_market_order(self, sample_order_request) -> Coroutine[Unknown, Unknown, None]:
         """Test processing new market order"""
         from src.web.api.orders import process_new_order
         
@@ -288,7 +288,7 @@ class TestOrderProcessing:
             mock_matching.execute_market_order.assert_called_once()
     
     @pytest_asyncio.async_test
-    async def test_process_new_order_limit_order(self, sample_order_request):
+    async def test_process_new_order_limit_order(self, sample_order_request) -> Coroutine[Unknown, Unknown, None]:
         """Test processing new limit order"""
         from src.web.api.orders import process_new_order
         
@@ -302,7 +302,7 @@ class TestOrderProcessing:
             mock_matching.add_to_matching_queue.assert_called_once()
     
     @pytest_asyncio.async_test
-    async def test_process_new_order_matching_unavailable(self, sample_order_request):
+    async def test_process_new_order_matching_unavailable(self, sample_order_request) -> Coroutine[Unknown, Unknown, None]:
         """Test processing new order when order matching is unavailable"""
         from src.web.api.orders import process_new_order
         
@@ -311,7 +311,7 @@ class TestOrderProcessing:
             await process_new_order(sample_order_request, "order_123")
     
     @pytest_asyncio.async_test
-    async def test_process_new_order_error_handling(self, sample_order_request):
+    async def test_process_new_order_error_handling(self, sample_order_request) -> Coroutine[Unknown, Unknown, None]:
         """Test processing new order with error"""
         from src.web.api.orders import process_new_order
         
@@ -333,7 +333,7 @@ class TestOrderProcessing:
 class TestOrderValidation:
     """Test order validation logic"""
     
-    def test_create_order_with_take_profit_and_stop_loss(self, client, sample_order_request):
+    def test_create_order_with_take_profit_and_stop_loss(self, client, sample_order_request) -> None:
         """Test creating order with take profit and stop loss"""
         sample_order_request.update({
             "take_profit": 46000.0,
@@ -347,7 +347,7 @@ class TestOrderValidation:
             
             assert response.status_code == status.HTTP_200_OK
     
-    def test_create_order_with_complex_conditions(self, client, sample_order_request):
+    def test_create_order_with_complex_conditions(self, client, sample_order_request) -> None:
         """Test creating order with complex trigger conditions"""
         sample_order_request.update({
             "trigger_condition": "signal_match",

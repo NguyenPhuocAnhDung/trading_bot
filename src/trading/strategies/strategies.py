@@ -54,7 +54,7 @@ class BaseStrategy(ABC):
     Abstract base class for trading strategies
     """
     
-    def __init__(self, config=None, exchange_client=None):
+    def __init__(self, config=None, exchange_client=None) -> None:
         self.config = config or get_config()
         self.exchange_client = exchange_client
         self.indicators = TechnicalIndicators(config)
@@ -134,7 +134,7 @@ class MACDRSIStrategy(BaseStrategy):
     MACD + RSI combined strategy with multi-timeframe confirmation
     """
     
-    def __init__(self, config=None, exchange_client=None):
+    def __init__(self, config=None, exchange_client=None) -> None:
         super().__init__(config, exchange_client)
         self.name = "MACD_RSI_Strategy"
     
@@ -288,7 +288,7 @@ class BollingerBandsStrategy(BaseStrategy):
     Bollinger Bands mean reversion strategy
     """
     
-    def __init__(self, config=None, exchange_client=None):
+    def __init__(self, config=None, exchange_client=None) -> None:
         super().__init__(config, exchange_client)
         self.name = "Bollinger_Bands_Strategy"
     
@@ -419,7 +419,7 @@ class MultiTimeframeStrategy(BaseStrategy):
     Multi-timeframe strategy combining different timeframe signals
     """
     
-    def __init__(self, config=None, exchange_client=None):
+    def __init__(self, config=None, exchange_client=None) -> None:
         super().__init__(config, exchange_client)
         self.name = "Multi_Timeframe_Strategy"
         self.primary_strategy = MACDRSIStrategy(config, exchange_client)
@@ -532,7 +532,7 @@ class StrategyManager:
     Manager class for handling multiple trading strategies
     """
     
-    def __init__(self, config=None, exchange_client=None):
+    def __init__(self, config=None, exchange_client=None) -> None:
         self.config = config or get_config()
         self.exchange_client = exchange_client
         self.strategies = {

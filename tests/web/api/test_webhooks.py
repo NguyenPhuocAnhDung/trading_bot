@@ -12,7 +12,7 @@ from tests.web.conftest import TestUtils
 class TestTradingViewWebhook:
     """Test TradingView webhook endpoints"""
     
-    def test_webhook_endpoint_exists(self, client):
+    def test_webhook_endpoint_exists(self, client) -> None:
         """Test that webhook endpoint exists and accepts POST"""
         response = client.post("/webhooks/tradingview", json={})
         
@@ -22,7 +22,7 @@ class TestTradingViewWebhook:
     @patch('src.web.api.webhooks.redis_service')
     @patch('src.web.api.webhooks.process_tradingview_signal')
     def test_valid_tradingview_signal(self, mock_process_signal, mock_redis_service, 
-                                     client, sample_tradingview_signal):
+                                     client, sample_tradingview_signal) -> None:
         """Test processing valid TradingView signal"""
         # Mock Redis service
         mock_redis_service.store_tradingview_signal.return_value = "signal_123"
@@ -36,7 +36,7 @@ class TestTradingViewWebhook:
         assert response_data["status"] == "received"
         assert "signal_id" in response_data
     
-    def test_invalid_signal_missing_required_fields(self, client):
+    def test_invalid_signal_missing_required_fields(self, client) -> None:
         """Test webhook with missing required fields"""
         invalid_signal = {
             "symbol": "BTCUSDT",
@@ -47,7 +47,7 @@ class TestTradingViewWebhook:
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_invalid_signal_wrong_action(self, client, sample_tradingview_signal):
+    def test_invalid_signal_wrong_action(self, client, sample_tradingview_signal) -> None:
         """Test webhook with invalid action value"""
         sample_tradingview_signal["action"] = "invalid_action"
         
@@ -59,7 +59,7 @@ class TestTradingViewWebhook:
             status.HTTP_400_BAD_REQUEST
         ]
     
-    def test_invalid_signal_negative_price(self, client, sample_tradingview_signal):
+    def test_invalid_signal_negative_price(self, client, sample_tradingview_signal) -> None:
         """Test webhook with negative price"""
         sample_tradingview_signal["price"] = -100.0
         
@@ -71,7 +71,7 @@ class TestTradingViewWebhook:
         ]
     
     @patch('src.web.api.webhooks.redis_service', None)
-    def test_webhook_redis_service_unavailable(self, client, sample_tradingview_signal):
+    def test_webhook_redis_service_unavailable(self, client, sample_tradingview_signal) -> None:
         """Test webhook when Redis service is unavailable"""
         response = client.post("/webhooks/tradingview", json=sample_tradingview_signal)
         
@@ -81,7 +81,7 @@ class TestTradingViewWebhook:
         assert "error" in response_data["detail"]
     
     @patch('src.web.api.webhooks.redis_service')
-    def test_webhook_redis_storage_error(self, mock_redis_service, client, sample_tradingview_signal):
+    def test_webhook_redis_storage_error(self, mock_redis_service, client, sample_tradingview_signal) -> None:
         """Test webhook when Redis storage fails"""
         mock_redis_service.store_tradingview_signal.side_effect = Exception("Redis error")
         
@@ -89,7 +89,7 @@ class TestTradingViewWebhook:
         
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     
-    def test_webhook_with_custom_indicators(self, client):
+    def test_webhook_with_custom_indicators(self, client) -> None:
         """Test webhook with custom TradingView indicators"""
         signal_with_indicators = {
             "symbol": "ETHUSDT",
@@ -116,7 +116,7 @@ class TestTradingViewWebhook:
             response_data = response.json()
             assert response_data["status"] == "received"
     
-    def test_webhook_test_endpoint_get(self, client):
+    def test_webhook_test_endpoint_get(self, client) -> None:
         """Test GET request to webhook test endpoint"""
         response = client.get("/webhooks/test")
         
@@ -126,7 +126,7 @@ class TestTradingViewWebhook:
         assert response_data["status"] == "online"
         assert "timestamp" in response_data
     
-    def test_webhook_test_endpoint_post(self, client):
+    def test_webhook_test_endpoint_post(self, client) -> None:
         """Test POST request to webhook test endpoint"""
         test_data = {"test": "data", "timestamp": "2023-12-01T12:00:00Z"}
         
@@ -143,7 +143,7 @@ class TestSignalProcessing:
     """Test signal processing logic"""
     
     @pytest_asyncio.async_test
-    async def test_process_tradingview_signal_success(self, sample_signal_data):
+    async def test_process_tradingview_signal_success(self, sample_signal_data) -> Coroutine[Unknown, Unknown, None]:
         """Test successful signal processing"""
         from src.web.api.webhooks import process_tradingview_signal
         
@@ -156,7 +156,7 @@ class TestSignalProcessing:
             mock_matching.process_signal_matching.assert_called_once()
     
     @pytest_asyncio.async_test
-    async def test_process_tradingview_signal_matching_unavailable(self, sample_signal_data):
+    async def test_process_tradingview_signal_matching_unavailable(self, sample_signal_data) -> Coroutine[Unknown, Unknown, None]:
         """Test signal processing when order matching is unavailable"""
         from src.web.api.webhooks import process_tradingview_signal
         
@@ -165,7 +165,7 @@ class TestSignalProcessing:
             await process_tradingview_signal(sample_signal_data, "signal_123")
     
     @pytest_asyncio.async_test
-    async def test_process_tradingview_signal_matching_error(self, sample_signal_data):
+    async def test_process_tradingview_signal_matching_error(self, sample_signal_data) -> Coroutine[Unknown, Unknown, None]:
         """Test signal processing when order matching fails"""
         from src.web.api.webhooks import process_tradingview_signal
         
@@ -178,7 +178,7 @@ class TestSignalProcessing:
 class TestWebhookSecurity:
     """Test webhook security features"""
     
-    def test_webhook_signature_verification_disabled(self, client, sample_tradingview_signal):
+    def test_webhook_signature_verification_disabled(self, client, sample_tradingview_signal) -> None:
         """Test webhook without signature verification (default)"""
         # Should work without any signature headers
         response = client.post("/webhooks/tradingview", json=sample_tradingview_signal)
@@ -187,7 +187,7 @@ class TestWebhookSecurity:
         assert response.status_code != status.HTTP_401_UNAUTHORIZED
     
     @patch('src.web.api.webhooks.verify_webhook_signature')
-    def test_webhook_signature_verification_enabled(self, mock_verify, client, sample_tradingview_signal):
+    def test_webhook_signature_verification_enabled(self, mock_verify, client, sample_tradingview_signal) -> None:
         """Test webhook with signature verification enabled"""
         mock_verify.return_value = True
         
@@ -201,7 +201,7 @@ class TestWebhookSecurity:
         assert response.status_code != status.HTTP_401_UNAUTHORIZED
     
     @patch('src.web.api.webhooks.verify_webhook_signature')
-    def test_webhook_invalid_signature(self, mock_verify, client, sample_tradingview_signal):
+    def test_webhook_invalid_signature(self, mock_verify, client, sample_tradingview_signal) -> None:
         """Test webhook with invalid signature"""
         mock_verify.return_value = False
         
@@ -217,13 +217,13 @@ class TestWebhookSecurity:
 class TestWebhookValidation:
     """Test webhook input validation"""
     
-    def test_webhook_empty_payload(self, client):
+    def test_webhook_empty_payload(self, client) -> None:
         """Test webhook with empty payload"""
         response = client.post("/webhooks/tradingview", json={})
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_webhook_malformed_json(self, client):
+    def test_webhook_malformed_json(self, client) -> None:
         """Test webhook with malformed JSON"""
         response = client.post("/webhooks/tradingview", 
                              data="invalid json", 
@@ -231,7 +231,7 @@ class TestWebhookValidation:
         
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     
-    def test_webhook_very_large_payload(self, client):
+    def test_webhook_very_large_payload(self, client) -> None:
         """Test webhook with very large payload"""
         large_signal = {
             "symbol": "BTCUSDT",

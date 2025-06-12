@@ -23,7 +23,7 @@ except ImportError:
 class RLCommands(commands.Cog):
     """Discord commands for FinRL (Financial Reinforcement Learning) integration"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.training_pipeline = None
         self.agent_manager = None
@@ -32,7 +32,7 @@ class RLCommands(commands.Cog):
         if FINRL_AVAILABLE:
             self._initialize_rl_components()
         
-    def _initialize_rl_components(self):
+    def _initialize_rl_components(self) -> None:
         """Initialize FinRL components"""
         try:
             config = getattr(self.bot, 'config', {})
@@ -58,7 +58,7 @@ class RLCommands(commands.Cog):
 
 # FinRL Training Commands
 
-async def rl_train_single(ctx, algorithm: str, timesteps: int = 50000):
+async def rl_train_single(ctx, algorithm: str, timesteps: int = 50000) -> Coroutine[Unknown, Unknown, None]:
     """
     Train a single RL agent
     
@@ -172,7 +172,7 @@ async def rl_train_single(ctx, algorithm: str, timesteps: int = 50000):
             del rl_cog.active_training[user_id]
 
 
-async def rl_train_ensemble(ctx, algorithms: str = "PPO,A2C,SAC"):
+async def rl_train_ensemble(ctx, algorithms: str = "PPO,A2C,SAC") -> Coroutine[Unknown, Unknown, None]:
     """
     Train an ensemble of RL agents
     
@@ -273,7 +273,7 @@ async def rl_train_ensemble(ctx, algorithms: str = "PPO,A2C,SAC"):
             del rl_cog.active_training[user_id]
 
 
-async def rl_predict(ctx, model_name: str = None, symbol: str = "BTC/USDT"):
+async def rl_predict(ctx, model_name: str = None, symbol: str = "BTC/USDT") -> Coroutine[Unknown, Unknown, None]:
     """
     Get RL agent prediction for trading
     
@@ -354,7 +354,7 @@ async def rl_predict(ctx, model_name: str = None, symbol: str = "BTC/USDT"):
         logger.error(f"RL prediction failed: {e}")
 
 
-async def rl_ensemble_predict(ctx, ensemble_name: str = None, symbol: str = "BTC/USDT"):
+async def rl_ensemble_predict(ctx, ensemble_name: str = None, symbol: str = "BTC/USDT") -> Coroutine[Unknown, Unknown, None]:
     """
     Get ensemble prediction from multiple RL agents
     
@@ -437,7 +437,7 @@ async def rl_ensemble_predict(ctx, ensemble_name: str = None, symbol: str = "BTC
         logger.error(f"Ensemble prediction failed: {e}")
 
 
-async def rl_models(ctx):
+async def rl_models(ctx) -> Coroutine[Unknown, Unknown, None]:
     """
     List all trained RL models
     
@@ -497,7 +497,7 @@ async def rl_models(ctx):
         await ctx.send(embed=embed)
 
 
-async def rl_status(ctx):
+async def rl_status(ctx) -> Coroutine[Unknown, Unknown, None]:
     """
     Show RL training status
     
@@ -548,7 +548,7 @@ async def rl_status(ctx):
     await ctx.send(embed=embed)
 
 
-async def rl_help(ctx):
+async def rl_help(ctx) -> Coroutine[Unknown, Unknown, None]:
     """
     Show RL commands help
     
@@ -626,7 +626,7 @@ async def _fetch_prediction_data(exchange_client, symbol: str) -> dict:
 
 
 # Register command functions
-async def setup_rl_commands(bot):
+async def setup_rl_commands(bot) -> Coroutine[Unknown, Unknown, None]:
     """Setup RL commands"""
     # Add the cog
     await bot.add_cog(RLCommands(bot))

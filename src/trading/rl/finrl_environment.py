@@ -33,7 +33,7 @@ class CryptoTradingEnv(gym.Env):
                  previous_state: List = None,
                  model_name: str = '',
                  mode: str = 'train',
-                 env_config: Dict = None):
+                 env_config: Dict = None) -> None:
         """
         Initialize the trading environment.
         
@@ -131,7 +131,7 @@ class CryptoTradingEnv(gym.Env):
         logger.info(f"Action space: {self.action_space}")
         logger.info(f"Observation space: {self.observation_space}")
         
-    def _prepare_data(self):
+    def _prepare_data(self) -> None:
         """Prepare and validate the trading data"""
         # Ensure required columns exist
         required_columns = ['date', 'tic', 'close', 'volume']
@@ -164,7 +164,7 @@ class CryptoTradingEnv(gym.Env):
         logger.info(f"Trading period: {self.trade_dates[0]} to {self.trade_dates[-1]}")
         logger.info(f"Technical indicators: {self.tech_indicator_list}")
         
-    def _initiate_state(self):
+    def _initiate_state(self) -> Unknown | None:
         """Initialize the environment state"""
         if self.day >= len(self.trade_dates):
             self.terminal = True
@@ -263,7 +263,7 @@ class CryptoTradingEnv(gym.Env):
         
         return self.state, reward, done, False, info
         
-    def _execute_trades(self, actions, current_prices):
+    def _execute_trades(self, actions, current_prices) -> None:
         """Execute trading actions"""
         # Calculate current portfolio value
         balance = self.state[0]
@@ -313,7 +313,7 @@ class CryptoTradingEnv(gym.Env):
         self.state[1:1+len(self.tic_list)] = current_positions
         self.state[1+len(self.tic_list):1+2*len(self.tic_list)] = current_prices
         
-    def _get_state(self):
+    def _get_state(self) -> Unknown | None:
         """Get current environment state"""
         if self.day >= len(self.trade_dates):
             return self.state
@@ -350,7 +350,7 @@ class CryptoTradingEnv(gym.Env):
         
         return state.astype(np.float32)
         
-    def _calculate_reward(self, portfolio_value_prev):
+    def _calculate_reward(self, portfolio_value_prev) -> float:
         """Calculate reward for the current step"""
         # Portfolio return
         portfolio_return = (self.portfolio_value - portfolio_value_prev) / portfolio_value_prev
@@ -400,7 +400,7 @@ class CryptoTradingEnv(gym.Env):
         
         return self.state, {}
         
-    def render(self, mode='human'):
+    def render(self, mode='human') -> None:
         """Render the environment"""
         if mode == 'human':
             print(f"Day: {self.day}")
@@ -413,7 +413,7 @@ class CryptoTradingEnv(gym.Env):
         """Get environment for Stable Baselines3 compatibility"""
         return self
         
-    def save_asset_memory(self):
+    def save_asset_memory(self) -> DataFrame:
         """Save portfolio performance memory"""
         date_list = self.date_memory
         asset_list = self.asset_memory
@@ -427,7 +427,7 @@ class CryptoTradingEnv(gym.Env):
         
         return df_account_value
         
-    def save_action_memory(self):
+    def save_action_memory(self) -> DataFrame:
         """Save action memory"""
         if len(self.actions_memory) > 0:
             date_list = self.date_memory
@@ -449,7 +449,7 @@ class FinRLDataProcessor:
                  symbols: List[str] = None,
                  tech_indicator_list: List[str] = None,
                  use_turbulence: bool = True,
-                 user_defined_feature: bool = False):
+                 user_defined_feature: bool = False) -> None:
         """
         Initialize the data processor.
         

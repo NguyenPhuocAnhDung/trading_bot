@@ -19,7 +19,7 @@ class ParameterOptimizer:
                 trading_window: int = 7,       # 1 week trading window
                 exchange_client = None,
                 symbols: List[str] = None,
-                timeframe: str = '1h'):
+                timeframe: str = '1h') -> None:
         """
         Initialize the parameter optimizer.
         
@@ -344,7 +344,7 @@ class ParameterOptimizer:
             }
         return self.current_params
     
-    def schedule_optimization(self, day='monday', time='07:00'):
+    def schedule_optimization(self, day='monday', time='07:00') -> None:
         """Schedule regular optimization"""
         if day.lower() == 'monday':
             schedule.every().monday.at(time).do(self.optimize_parameters)
@@ -355,7 +355,7 @@ class ParameterOptimizer:
         
         logger.info(f"Scheduled parameter optimization for {day} at {time}")
         
-    def run_scheduler(self, blocking=False):
+    def run_scheduler(self, blocking=False) -> None:
         """Run the scheduler in a separate thread"""
         if blocking:
             while True:
@@ -366,7 +366,7 @@ class ParameterOptimizer:
             thread = threading.Thread(target=self._scheduler_worker, daemon=True)
             thread.start()
             
-    def _scheduler_worker(self):
+    def _scheduler_worker(self) -> None:
         """Worker function for running the scheduler in a separate thread"""
         while True:
             schedule.run_pending()

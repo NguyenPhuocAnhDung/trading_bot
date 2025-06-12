@@ -19,7 +19,7 @@ class HealthChecker:
     Health check system for monitoring bot status in production
     """
     
-    def __init__(self, bot=None, config=None):
+    def __init__(self, bot=None, config=None) -> None:
         self.bot = bot
         self.config = config
         self.start_time = time.time()
@@ -192,7 +192,7 @@ class HealthChecker:
                 "error": str(e)
             }
     
-    async def update_health_file(self, is_healthy: bool):
+    async def update_health_file(self, is_healthy: bool) -> Coroutine[Unknown, Unknown, None]:
         """Update health file for Docker health checks"""
         try:
             if is_healthy:
@@ -204,7 +204,7 @@ class HealthChecker:
         except Exception as e:
             logger.error(f"Error updating health file: {e}")
     
-    async def start_health_monitor(self, interval: int = 30):
+    async def start_health_monitor(self, interval: int = 30) -> Coroutine[Unknown, Unknown, None]:
         """Start periodic health monitoring"""
         logger.info(f"Starting health monitor with {interval}s interval")
         
@@ -250,7 +250,7 @@ def simple_health_check() -> bool:
     return health_file.exists()
 
 # CLI function for manual health checks
-async def main():
+async def main() -> Coroutine[Unknown, Unknown, Never]:
     """CLI health check function"""
     health_checker = HealthChecker()
     health_data = await health_checker.get_comprehensive_health()

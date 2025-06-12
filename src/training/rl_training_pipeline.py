@@ -42,7 +42,7 @@ class RLTrainingPipeline:
     def __init__(self, 
                  exchange_client=None,
                  config: Dict[str, Any] = None,
-                 output_dir: str = 'training_results'):
+                 output_dir: str = 'training_results') -> None:
         """
         Initialize the RL Training Pipeline.
         
@@ -586,7 +586,7 @@ class RLTrainingPipeline:
         Returns:
             Serialized results
         """
-        def convert_item(item):
+        def convert_item(item) -> dict[str, Unknown] | float | list[Unknown] | str | Unknown:
             if isinstance(item, (np.integer, np.floating)):
                 return float(item)
             elif isinstance(item, np.ndarray):

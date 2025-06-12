@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 class PortfolioCommands(commands.Cog):
     """Portfolio management commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logger.info("Portfolio commands cog initialized")
     
     @commands.command(name="portfolio")
-    async def portfolio(self, ctx):
+    async def portfolio(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Show portfolio summary"""
         try:
             embed = discord.Embed(
@@ -77,7 +77,7 @@ class PortfolioCommands(commands.Cog):
             await ctx.send(f"❌ Error fetching portfolio: {str(e)}")
     
     @commands.command(name="p_position_size")
-    async def position_size(self, ctx, symbol: str, entry_price: float, stop_loss: float):
+    async def position_size(self, ctx, symbol: str, entry_price: float, stop_loss: float) -> Coroutine[Unknown, Unknown, None]:
         """Calculate optimal position size based on risk management"""
         try:
             symbol = symbol.upper()
@@ -167,6 +167,6 @@ class PortfolioCommands(commands.Cog):
             logger.error(f"Error in position_size command: {e}")
             await ctx.send(f"❌ Error calculating position size: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(PortfolioCommands(bot))
     logger.info("Portfolio commands cog loaded") 

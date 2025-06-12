@@ -10,7 +10,7 @@ logger = logging.getLogger('database')
 class Database:
     """Database abstraction layer for signal storage"""
     
-    def __init__(self, db_path=None):
+    def __init__(self, db_path=None) -> None:
         """
         Initialize the database
         
@@ -49,7 +49,7 @@ class Database:
             self.conn = None
             self.signals = []
     
-    def _create_tables(self):
+    def _create_tables(self) -> None:
         """Create the necessary tables if they don't exist"""
         if not self.conn:
             return
@@ -86,7 +86,7 @@ class Database:
         except Exception as e:
             logger.error(f"Error creating database tables: {e}")
     
-    def store_signal(self, signal):
+    def store_signal(self, signal) -> bool:
         """Store a signal in the database"""
         if not self.use_database or not self.conn:
             self.signals.append(signal)
@@ -138,7 +138,7 @@ class Database:
             self.signals.append(signal)  # Fallback to in-memory storage
             return True  # Return True because we stored it in memory
     
-    def get_signals(self, symbol=None, strategy_code=None, limit=100):
+    def get_signals(self, symbol=None, strategy_code=None, limit=100) -> list[Unknown]:
         """Get signals from the database"""
         if not self.use_database or not self.conn:
             # Filter in-memory signals
@@ -194,7 +194,7 @@ class Database:
             logger.error(f"Error getting signals from database: {e}")
             return []
     
-    def close(self):
+    def close(self) -> None:
         """Close the database connection"""
         if self.conn:
             self.conn.close()

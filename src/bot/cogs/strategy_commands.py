@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 class StrategyCommands(commands.Cog):
     """Strategy commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logger.info("Strategy commands cog initialized")
     
     @commands.command(name="s_strategies")
-    async def list_strategies(self, ctx):
+    async def list_strategies(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """List available trading strategies"""
         try:
             embed = discord.Embed(
@@ -55,7 +55,7 @@ class StrategyCommands(commands.Cog):
             await ctx.send(f"❌ Error listing strategies: {str(e)}")
     
     @commands.command(name="s_analyze")
-    async def analyze(self, ctx, strategy: str, symbol: str, interval: str = '1d'):
+    async def analyze(self, ctx, strategy: str, symbol: str, interval: str = '1d') -> Coroutine[Unknown, Unknown, None]:
         """Analyze a symbol using a specific strategy"""
         try:
             symbol = symbol.upper()
@@ -120,7 +120,7 @@ class StrategyCommands(commands.Cog):
     # Original signal command removed to avoid conflict with trading_commands.py
 
     @commands.command(name="strategysignal")
-    async def strategysignal(self, ctx, symbol: str, strategy: str = "SC01"):
+    async def strategysignal(self, ctx, symbol: str, strategy: str = "SC01") -> Coroutine[Unknown, Unknown, None]:
         """Generate a simple trading signal for a cryptocurrency with a specific strategy
         
         Usage: b!strategysignal <symbol> [strategy]
@@ -206,6 +206,6 @@ class StrategyCommands(commands.Cog):
             logger.error(f"Error in strategysignal command: {e}")
             await ctx.send(f"❌ Error generating signal: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(StrategyCommands(bot))
     logger.info("Strategy commands cog loaded") 

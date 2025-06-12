@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 class HelpCommands(commands.Cog):
     """Help commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logger.info("Help commands cog initialized")
     
     @commands.command(name="h_help")
-    async def help_command(self, ctx, command: Optional[str] = None):
+    async def help_command(self, ctx, command: Optional[str] = None) -> Coroutine[Unknown, Unknown, None]:
         """Show help information for commands"""
         try:
             prefix = "b!"  # According to memory, we use b! prefix
@@ -34,7 +34,7 @@ class HelpCommands(commands.Cog):
             logger.error(f"Error in help command: {e}")
             await ctx.send(f"❌ Error showing help: {str(e)}")
     
-    async def _show_general_help(self, ctx, prefix):
+    async def _show_general_help(self, ctx, prefix) -> Coroutine[Unknown, Unknown, None]:
         """Show general help information"""
         embed = discord.Embed(
             title="📚 Trading Bot Help",
@@ -66,7 +66,7 @@ class HelpCommands(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    async def _show_command_help(self, ctx, command_name, prefix):
+    async def _show_command_help(self, ctx, command_name, prefix) -> Coroutine[Unknown, Unknown, None]:
         """Show help for a specific command"""
         command = self.bot.get_command(command_name)
         
@@ -102,7 +102,7 @@ class HelpCommands(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    def _get_command_examples(self, command_name, prefix):
+    def _get_command_examples(self, command_name, prefix) -> str | None:
         """Get examples for specific commands"""
         examples = {
             "buy": f"`{prefix}buy BTC 0.1`\n`{prefix}buy ETH 2`",
@@ -121,7 +121,7 @@ class HelpCommands(commands.Cog):
         return examples.get(command_name)
     
     @commands.command(name="commands")
-    async def list_commands(self, ctx):
+    async def list_commands(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """List all available commands"""
         try:
             prefix = "b!"  # According to memory, we use b! prefix
@@ -152,6 +152,6 @@ class HelpCommands(commands.Cog):
             logger.error(f"Error in list_commands command: {e}")
             await ctx.send(f"❌ Error listing commands: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(HelpCommands(bot))
     logger.info("Help commands cog loaded") 

@@ -60,7 +60,7 @@ class MT5Client:
     Provides forex and CFD trading capabilities
     """
     
-    def __init__(self, config=None):
+    def __init__(self, config=None) -> None:
         self.config = config
         self.connected = False
         self.account_info = None
@@ -93,7 +93,7 @@ class MT5Client:
         # Initialize connection
         self._initialize_connection()
     
-    def _initialize_connection(self):
+    def _initialize_connection(self) -> bool:
         """Initialize MT5 connection"""
         if not MT5_AVAILABLE:
             logger.error("Cannot initialize MT5: package not available")
@@ -124,7 +124,7 @@ class MT5Client:
             logger.error(f"Error initializing MT5 connection: {e}")
             return False
     
-    def _load_symbols_info(self):
+    def _load_symbols_info(self) -> None:
         """Load available symbols information"""
         try:
             symbols = mt5.symbols_get()
@@ -684,7 +684,7 @@ class MT5Client:
             logger.error(f"MT5 connection test failed: {e}")
             return False
     
-    def shutdown(self):
+    def shutdown(self) -> None:
         """Shutdown MT5 connection"""
         try:
             if MT5_AVAILABLE and self.connected:
@@ -694,6 +694,6 @@ class MT5Client:
         except Exception as e:
             logger.error(f"Error shutting down MT5: {e}")
     
-    def __del__(self):
+    def __del__(self) -> None:
         """Cleanup on destruction"""
         self.shutdown() 

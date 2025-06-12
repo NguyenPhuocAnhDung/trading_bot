@@ -18,7 +18,7 @@ class DynamicRiskManager:
                 max_open_trades: int = 5,
                 atr_period: int = 14,
                 max_drawdown_limit: float = 0.15,  # 15% max drawdown
-                volatility_scaling: bool = True):
+                volatility_scaling: bool = True) -> None:
         """
         Initialize the risk manager with parameters.
         
@@ -198,7 +198,7 @@ class DynamicRiskManager:
     
     def update_account_state(self, 
                             current_balance: float, 
-                            open_trades: List[Dict[str, Any]] = None):
+                            open_trades: List[Dict[str, Any]] = None) -> None:
         """
         Update account state for risk management.
         
@@ -226,7 +226,7 @@ class DynamicRiskManager:
             self.daily_risk_used = 0.0
             self.last_risk_update = now
     
-    def _update_risk_parameters(self):
+    def _update_risk_parameters(self) -> None:
         """Update risk parameters based on current account state"""
         # Reduce risk if drawdown exceeds thresholds
         if self.current_drawdown > self.max_drawdown_limit:
@@ -239,7 +239,7 @@ class DynamicRiskManager:
             # If drawdown is low, gradually restore normal risk levels
             self.risk_adjustment_factor = min(1.0, self.risk_adjustment_factor + 0.05)
     
-    def record_trade(self, trade: Dict[str, Any]):
+    def record_trade(self, trade: Dict[str, Any]) -> None:
         """
         Record a new trade for risk tracking.
         

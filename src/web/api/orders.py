@@ -77,7 +77,7 @@ class OrderStatus(BaseModel):
 async def create_order(
     order: OrderRequest,
     background_tasks: BackgroundTasks
-):
+) -> Coroutine[Unknown, Unknown, OrderResponse]:
     """
     Create new order from web frontend
     
@@ -121,7 +121,7 @@ async def create_order(
         raise HTTPException(status_code=500, detail=f"Error creating order: {str(e)}")
 
 @orders_router.get("/status/{order_id}", response_model=OrderStatus)
-async def get_order_status(order_id: str):
+async def get_order_status(order_id: str) -> Coroutine[Unknown, Unknown, OrderStatus]:
     """Get order status by ID"""
     try:
         from ..main import redis_service
@@ -170,7 +170,7 @@ async def get_user_orders(
         raise HTTPException(status_code=500, detail=f"Error getting user orders: {str(e)}")
 
 @orders_router.put("/cancel/{order_id}")
-async def cancel_order(order_id: str):
+async def cancel_order(order_id: str) -> Coroutine[Unknown, Unknown, dict[str, str]]:
     """Cancel pending order"""
     try:
         from ..main import redis_service
@@ -218,7 +218,7 @@ async def get_queue_statistics():
         logger.error(f"❌ Error getting queue stats: {e}")
         raise HTTPException(status_code=500, detail=f"Error getting queue stats: {str(e)}")
 
-async def process_new_order(order_data: Dict[str, Any], order_id: str):
+async def process_new_order(order_data: Dict[str, Any], order_id: str) -> Coroutine[Unknown, Unknown, None]:
     """Process new order for immediate or conditional execution"""
     try:
         logger.info(f"🔄 Processing new order {order_id}")

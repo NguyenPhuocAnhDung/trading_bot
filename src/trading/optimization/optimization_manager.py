@@ -27,7 +27,7 @@ class OptimizationManager:
                 exchange_client = None,
                 config: Dict[str, Any] = None,
                 data_dir: str = 'data',
-                results_dir: str = 'results'):
+                results_dir: str = 'results') -> None:
         """
         Initialize the optimization manager.
         
@@ -55,7 +55,7 @@ class OptimizationManager:
         self.current_market_regime = None
         self.performance_tracker = PerformanceTracker()
         
-    def _init_components(self):
+    def _init_components(self) -> None:
         """Initialize optimization components"""
         # Initialize parameter optimizer
         self.param_optimizer = ParameterOptimizer(
@@ -146,7 +146,7 @@ class OptimizationManager:
         df.set_index('timestamp', inplace=True)
         return df
     
-    def _cache_data(self, df: pd.DataFrame, symbol: str, timeframe: str):
+    def _cache_data(self, df: pd.DataFrame, symbol: str, timeframe: str) -> None:
         """Cache data to disk"""
         try:
             # Create clean filename
@@ -556,7 +556,7 @@ class OptimizationManager:
         
         return result
     
-    def _save_optimization_result(self, result: Dict[str, Any], method: str):
+    def _save_optimization_result(self, result: Dict[str, Any], method: str) -> None:
         """
         Save optimization result to disk.
         
@@ -615,7 +615,7 @@ class OptimizationManager:
             logger.error(f"Error loading optimization result: {e}")
             return {}
     
-    def schedule_optimizations(self, schedule_type: str = 'daily'):
+    def schedule_optimizations(self, schedule_type: str = 'daily') -> None:
         """
         Schedule regular optimizations.
         

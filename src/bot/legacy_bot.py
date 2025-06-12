@@ -22,7 +22,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = os.getenv('DISCORD_CHANNEL_ID')
 
-def create_signal_embed(pair, strategy, entry_price, tp_price, sl_price, ratio="0.0%", status="takeprofit", imminent=1, author="Reina"):
+def create_signal_embed(pair, strategy, entry_price, tp_price, sl_price, ratio="0.0%", status="takeprofit", imminent=1, author="Reina") -> Embed:
     """Create a Discord embed for a trading signal"""
     # Split the pair into its components
     pair_components = pair.split("-")
@@ -55,7 +55,7 @@ def create_signal_embed(pair, strategy, entry_price, tp_price, sl_price, ratio="
     
     return embed
 
-def run_bot():
+def run_bot() -> None:
     """This function is deprecated. Use main.py instead."""
     logger.warning("bot.py's run_bot() is deprecated. Please use main.py to run the bot.")
     logger.warning("This will not start a bot instance to avoid duplicate signals.") 

@@ -11,7 +11,7 @@ logger = logging.getLogger('secure_config')
 class SecureConfig:
     """Secure API key management with encryption"""
     
-    def __init__(self, master_key=None):
+    def __init__(self, master_key=None) -> None:
         """
         Initialize the secure configuration manager
         
@@ -47,7 +47,7 @@ class SecureConfig:
         
         self.cipher = Fernet(self.key)
     
-    def _derive_key(self, password, salt=b'tradingbot'):
+    def _derive_key(self, password, salt=b'tradingbot') -> bytes:
         """Derive a key from a password"""
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -82,7 +82,7 @@ class SecureConfig:
             logger.error(f"Error decrypting API key: {e}")
             return encrypted_key
     
-    def secure_log(self, api_key):
+    def secure_log(self, api_key) -> Literal['****'] | Unknown | None:
         """Get a masked version of an API key for logging"""
         if not api_key:
             return None

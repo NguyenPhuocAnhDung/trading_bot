@@ -23,7 +23,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class WebhookSecurity:
     """Webhook signature verification and security"""
     
-    def __init__(self, secret_key: Optional[str] = None):
+    def __init__(self, secret_key: Optional[str] = None) -> None:
         self.secret_key = secret_key
         
     def verify_signature(self, request_body: bytes, signature: str) -> bool:
@@ -68,7 +68,7 @@ class WebhookSecurity:
 class RateLimiter:
     """Rate limiting for API endpoints and webhooks"""
     
-    def __init__(self, redis_client: redis.Redis):
+    def __init__(self, redis_client: redis.Redis) -> None:
         self.redis = redis_client
         
     async def check_rate_limit(self, identifier: str, limit: int, window: int = 60) -> bool:
@@ -141,7 +141,7 @@ class RateLimiter:
 class JWTAuth:
     """JWT token authentication for API endpoints"""
     
-    def __init__(self, secret_key: str, algorithm: str = "HS256"):
+    def __init__(self, secret_key: str, algorithm: str = "HS256") -> None:
         self.secret_key = secret_key
         self.algorithm = algorithm
         
@@ -174,7 +174,7 @@ class JWTAuth:
 class APIKeyAuth:
     """API key authentication for external integrations"""
     
-    def __init__(self, redis_client: redis.Redis):
+    def __init__(self, redis_client: redis.Redis) -> None:
         self.redis = redis_client
         
     async def validate_api_key(self, api_key: str) -> Optional[Dict[str, Any]]:
@@ -340,13 +340,13 @@ def get_client_ip(request: Request) -> str:
 class SecurityMiddleware:
     """Security middleware for additional protection"""
     
-    def __init__(self, app):
+    def __init__(self, app) -> None:
         self.app = app
     
-    async def __call__(self, scope, receive, send):
+    async def __call__(self, scope, receive, send) -> Coroutine[Unknown, Unknown, None]:
         if scope["type"] == "http":
             # Add security headers
-            async def send_wrapper(message):
+            async def send_wrapper(message) -> Coroutine[Unknown, Unknown, None]:
                 if message["type"] == "http.response.start":
                     headers = dict(message.get("headers", []))
                     

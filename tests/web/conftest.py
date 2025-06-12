@@ -43,19 +43,19 @@ TEST_CONFIG = {
 }
 
 @pytest.fixture(scope="session")
-def event_loop():
+def event_loop() -> Generator[AbstractEventLoop, Unknown, None]:
     """Create an instance of the default event loop for the test session."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
 
 @pytest.fixture
-def test_config():
+def test_config() -> dict[str, dict[str, bool | float] | dict[str, int | str | None]]:
     """Provide test configuration"""
     return TEST_CONFIG
 
 @pytest_asyncio.fixture
-async def mock_redis():
+async def mock_redis() -> Coroutine[Unknown, Unknown, AsyncMock]:
     """Mock Redis client for testing"""
     mock_redis = AsyncMock(spec=redis.Redis)
     mock_redis.ping.return_value = True
@@ -68,13 +68,13 @@ async def mock_redis():
     return mock_redis
 
 @pytest_asyncio.fixture
-async def redis_service(mock_redis):
+async def redis_service(mock_redis) -> Coroutine[Unknown, Unknown, Unknown]:
     """Redis service with mocked client"""
     service = RedisService(mock_redis)
     return service
 
 @pytest_asyncio.fixture
-async def mock_trading_service():
+async def mock_trading_service() -> Coroutine[Unknown, Unknown, AsyncMock]:
     """Mock trading service for testing"""
     mock_service = AsyncMock(spec=TradingService)
     mock_service.initialized = True
@@ -89,13 +89,13 @@ async def mock_trading_service():
     return mock_service
 
 @pytest_asyncio.fixture
-async def order_matching_service(redis_service, mock_trading_service):
+async def order_matching_service(redis_service, mock_trading_service) -> Coroutine[Unknown, Unknown, Unknown]:
     """Order matching service with mocked dependencies"""
     service = OrderMatchingService(redis_service, mock_trading_service)
     return service
 
 @pytest.fixture
-def client():
+def client() -> TestClient:
     """FastAPI test client"""
     return TestClient(app)
 
@@ -106,7 +106,7 @@ async def async_client() -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 @pytest.fixture
-def sample_tradingview_signal():
+def sample_tradingview_signal() -> dict[str, dict[str, float] | float | str]:
     """Sample TradingView webhook signal for testing"""
     return {
         "symbol": "BTCUSDT",
@@ -123,7 +123,7 @@ def sample_tradingview_signal():
     }
 
 @pytest.fixture
-def sample_order_request():
+def sample_order_request() -> dict[str, float | str]:
     """Sample order request for testing"""
     return {
         "user_id": "test_user_123",
@@ -141,7 +141,7 @@ def sample_order_request():
     }
 
 @pytest.fixture
-def sample_order_data():
+def sample_order_data() -> dict[str, str]:
     """Sample order data stored in Redis"""
     return {
         "order_id": "order_20231201_120000_123456",
@@ -159,7 +159,7 @@ def sample_order_data():
     }
 
 @pytest.fixture
-def sample_signal_data():
+def sample_signal_data() -> dict[str, float | str]:
     """Sample signal data for testing"""
     return {
         "signal_id": "signal_20231201_120000_123456",
@@ -209,7 +209,7 @@ class TestUtils:
     """Utility functions for testing"""
     
     @staticmethod
-    def assert_order_response(response_data: Dict[str, Any], expected_status: str = None):
+    def assert_order_response(response_data: Dict[str, Any], expected_status: str = None) -> None:
         """Assert order response has required fields"""
         assert "order_id" in response_data
         assert "status" in response_data
@@ -220,7 +220,7 @@ class TestUtils:
             assert response_data["status"] == expected_status
     
     @staticmethod
-    def assert_signal_response(response_data: Dict[str, Any]):
+    def assert_signal_response(response_data: Dict[str, Any]) -> None:
         """Assert signal response has required fields"""
         assert "status" in response_data
         assert "signal_id" in response_data
@@ -229,7 +229,7 @@ class TestUtils:
 
 # Global test fixtures
 @pytest.fixture(scope="session", autouse=True)
-def setup_test_environment():
+def setup_test_environment() -> Generator[None, Unknown, None]:
     """Setup test environment"""
     # Set test environment variables
     import os

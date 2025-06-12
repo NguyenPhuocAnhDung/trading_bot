@@ -145,7 +145,7 @@ optimization_manager = None
 
 # bot.exchange_client = ExchangeClientMock(bot.order_history)
 
-def get_command_status():
+def get_command_status() -> tuple[list[Unknown], list[Unknown]]:
     """Return lists of active and inactive commands"""
     all_commands = [cmd.name for cmd in bot.commands]
     active = list(bot.command_usage.keys())
@@ -159,7 +159,7 @@ bot.get_command_status = get_command_status
 bot_healthy = False
 last_heartbeat = datetime.now()
 
-def update_health_status(status: bool = True):
+def update_health_status(status: bool = True) -> None:
     """Update the health check file for Docker health monitoring"""
     global bot_healthy, last_heartbeat
     bot_healthy = status
@@ -176,7 +176,7 @@ def update_health_status(status: bool = True):
     except Exception as e:
         logger.error(f"Failed to update health status: {e}")
 
-async def health_monitor():
+async def health_monitor() -> Coroutine[Unknown, Unknown, None]:
     """Background task to monitor bot health"""
     while True:
         try:
@@ -195,12 +195,12 @@ async def health_monitor():
             update_health_status(False)
             await asyncio.sleep(30)
 
-async def start_health_server():
+async def start_health_server() -> Coroutine[Unknown, Unknown, None]:
     """Start a simple HTTP health server for monitoring"""
     from aiohttp import web
     global health_server_port
     
-    async def health_endpoint(request):
+    async def health_endpoint(request) -> Coroutine[Unknown, Unknown, Response]:
         """Health check endpoint"""
         uptime = datetime.now() - startup_time
         
@@ -217,7 +217,7 @@ async def start_health_server():
         status_code = 200 if bot_healthy else 503
         return web.json_response(health_data, status=status_code)
     
-    async def metrics_endpoint(request):
+    async def metrics_endpoint(request) -> Coroutine[Unknown, Unknown, Response]:
         """Metrics endpoint for monitoring"""
         uptime = datetime.now() - startup_time
         metrics = {
@@ -279,19 +279,19 @@ command_lock = threading.Lock()
 signal_tracker = {}
 signal_tracker_lock = threading.Lock()
 
-def is_command_running(user_id, command_name):
+def is_command_running(user_id, command_name) -> bool:
     """Check if a command is already running for a user"""
     with command_lock:
         key = f"{user_id}_{command_name}"
         return key in command_locks
 
-def set_command_running(user_id, command_name):
+def set_command_running(user_id, command_name) -> None:
     """Mark a command as running for a user"""
     with command_lock:
         key = f"{user_id}_{command_name}"
         command_locks[key] = True
 
-def clear_command_running(user_id, command_name):
+def clear_command_running(user_id, command_name) -> None:
     """Clear the running status for a command"""
     with command_lock:
         key = f"{user_id}_{command_name}"
@@ -312,7 +312,7 @@ def track_signal(symbol, strategy_code):
             
         return signal_tracker[key]["count"]
 
-def is_duplicate_signal(symbol, strategy_code, window_seconds=180):
+def is_duplicate_signal(symbol, strategy_code, window_seconds=180) -> bool:
     """Check if a signal was recently generated (within the time window)"""
     with signal_tracker_lock:
         key = f"{symbol}_{strategy_code}"
@@ -330,7 +330,7 @@ def is_duplicate_signal(symbol, strategy_code, window_seconds=180):
         return False
 
 @bot.event
-async def on_ready():
+async def on_ready() -> Coroutine[Unknown, Unknown, None]:
     logger.info(f'{bot.user} has connected to Discord!')
     global optimization_manager
     try:
@@ -372,7 +372,7 @@ async def on_ready():
         
         # Add missing method for dual_macd_rsi command
         if not hasattr(bot, 'get_market_data'):
-            async def get_market_data_wrapper(symbol, interval, limit=100, exchange=None):
+            async def get_market_data_wrapper(symbol, interval, limit=100, exchange=None) -> Coroutine[Unknown, Unknown, DataFrame | None]:
                 """Wrapper for get_market_data"""
                 try:
                     logger.info(f"Fetching market data for {symbol} on {interval} timeframe")
@@ -437,14 +437,14 @@ async def on_ready():
         update_health_status(False)
 
 @bot.event
-async def on_command(ctx):
+async def on_command(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Track command usage"""
     if ctx.command:
         bot.command_usage[ctx.command.name] = datetime.now()
         logger.debug(f"Command executed: {ctx.command.name} by {ctx.author}")
 
 @bot.command(name='help')
-async def help_menu(ctx):
+async def help_menu(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Display help information for the trading bot"""
     embed = discord.Embed(title="Trading Bot", color=0x2F3136)
     embed.set_author(name="Trading Bot", icon_url="https://i.imgur.com/8dQlQAW.png")
@@ -542,7 +542,7 @@ async def help_menu(ctx):
 # Use /price instead of b!price for price queries
 
 @bot.command(name='balance')
-async def get_balance(ctx):
+async def get_balance(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Get your account balance"""
     if not bot.exchange_client:
         await ctx.send("Trading components (exchange client) are not initialized. Check logs for details.")
@@ -577,7 +577,7 @@ async def get_balance(ctx):
     await ctx.send(response)
 
 @bot.command(name='chart')
-async def get_chart(ctx, symbol: str, interval: str = '1d', limit: int = 30):
+async def get_chart(ctx, symbol: str, interval: str = '1d', limit: int = 30) -> Coroutine[Unknown, Unknown, None]:
     """Generate a price chart for a cryptocurrency.
     
     Parameters:
@@ -607,7 +607,7 @@ async def get_chart(ctx, symbol: str, interval: str = '1d', limit: int = 30):
         await ctx.send(f"Failed to generate chart for {symbol}.")
 
 @bot.command(name='buy')
-async def buy(ctx, symbol: str, quantity: float):
+async def buy(ctx, symbol: str, quantity: float) -> Coroutine[Unknown, Unknown, None]:
     """Buy a cryptocurrency at market price.
     
     Parameters:
@@ -645,7 +645,7 @@ async def buy(ctx, symbol: str, quantity: float):
     await ctx.send(response)
 
 @bot.command(name='sell')
-async def sell(ctx, symbol: str, quantity: float):
+async def sell(ctx, symbol: str, quantity: float) -> Coroutine[Unknown, Unknown, None]:
     """Sell a cryptocurrency at market price.
     
     Parameters:
@@ -683,12 +683,12 @@ async def sell(ctx, symbol: str, quantity: float):
     await ctx.send(response)
 
 @bot.command(name='strategies')
-async def list_strategies(ctx):
+async def list_strategies(ctx) -> Coroutine[Unknown, Unknown, None]:
     """List available trading strategies"""
     await ctx.send("**Available Trading Strategies:**\n• MA Crossover (ma_crossover)\n• RSI (rsi)\n• Bollinger Bands (bollinger_bands)\n• SC Signals (sc_signal)")
 
 @bot.command(name='analyze')
-async def analyze(ctx, strategy: str, symbol: str, interval: str = '1d'):
+async def analyze(ctx, strategy: str, symbol: str, interval: str = '1d') -> Coroutine[Unknown, Unknown, None]:
     """Analyze a symbol using a specific strategy.
     
     Parameters:
@@ -735,7 +735,7 @@ async def analyze(ctx, strategy: str, symbol: str, interval: str = '1d'):
     await ctx.send(response)
 
 @bot.command(name='strategy_chart')
-async def strategy_chart(ctx, strategy: str, symbol: str, interval: str = '1d', limit: int = 30):
+async def strategy_chart(ctx, strategy: str, symbol: str, interval: str = '1d', limit: int = 30) -> Coroutine[Unknown, Unknown, None]:
     """Generate a chart with strategy indicators.
     
     Parameters:
@@ -766,7 +766,7 @@ async def strategy_chart(ctx, strategy: str, symbol: str, interval: str = '1d', 
         await ctx.send(f"Failed to generate strategy chart for {symbol}.")
 
 @bot.command(name='add_strategy')
-async def add_strategy(ctx, strategy: str, symbol: str, interval: str = '1d'):
+async def add_strategy(ctx, strategy: str, symbol: str, interval: str = '1d') -> Coroutine[Unknown, Unknown, None]:
     """Add a trading strategy to monitor.
     
     Parameters:
@@ -794,7 +794,7 @@ async def add_strategy(ctx, strategy: str, symbol: str, interval: str = '1d'):
         await ctx.send(f"Failed to add {strategy} strategy for {symbol}")
 
 @bot.command(name='remove_strategy')
-async def remove_strategy(ctx, strategy: str, symbol: str, interval: str = '1d'):
+async def remove_strategy(ctx, strategy: str, symbol: str, interval: str = '1d') -> Coroutine[Unknown, Unknown, None]:
     """Remove a trading strategy.
     
     Parameters:
@@ -817,7 +817,7 @@ async def remove_strategy(ctx, strategy: str, symbol: str, interval: str = '1d')
         await ctx.send(f"Strategy not found: {strategy} for {symbol} ({interval})")
 
 @bot.command(name='list_active_strategies')
-async def list_active_strategies(ctx):
+async def list_active_strategies(ctx) -> Coroutine[Unknown, Unknown, None]:
     """List all active trading strategies"""
     if not bot.exchange_client:
         await ctx.send("Trading components (exchange client) are not initialized. Check logs for details.")
@@ -835,7 +835,7 @@ async def list_active_strategies(ctx):
     await ctx.send(response)
 
 @bot.command(name='test_connection')
-async def test_binance_connection(ctx):
+async def test_binance_connection(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Test connection to the configured exchange"""
     if not bot.exchange_client:
         await ctx.send("Trading components (exchange client) are not initialized.")
@@ -850,7 +850,7 @@ async def test_binance_connection(ctx):
         await ctx.send(f"Failed to connect to {exchange_name} API. Check logs for details. ❌")
 
 @bot.command(name='sync')
-async def sync_commands(ctx, guild_id: int = None):
+async def sync_commands(ctx, guild_id: int = None) -> Coroutine[Unknown, Unknown, None]:
     """Sync slash commands (Admin only)"""
     if not ctx.author.guild_permissions.administrator:
         await ctx.send("❌ You need administrator permissions to sync commands.")
@@ -892,7 +892,7 @@ async def sync_commands(ctx, guild_id: int = None):
         await ctx.send(f"❌ Error syncing commands: {str(e)}")
 
 @bot.command(name='health')
-async def bot_health(ctx):
+async def bot_health(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Check the bot's health status and system information"""
     try:
         uptime = datetime.now() - startup_time
@@ -934,7 +934,7 @@ async def bot_health(ctx):
         await ctx.send(embed=error_embed)
 
 @bot.command(name='indicator')
-async def analyze_indicator(ctx, indicator_name: str, symbol: str, interval: str = "1h", *args):
+async def analyze_indicator(ctx, indicator_name: str, symbol: str, interval: str = "1h", *args) -> Coroutine[Unknown, Unknown, None]:
     """Analyze a specific indicator on a coin. TODO: Refactor with new TechnicalIndicators service."""
     await ctx.send("The 'indicator' command is temporarily disabled for refactoring. Please use specific analysis commands or strategy features.")
     return
@@ -973,21 +973,21 @@ async def analyze_indicator(ctx, indicator_name: str, symbol: str, interval: str
     #     await ctx.send(f"An error occurred: {str(e)}")
 
 @bot.command(name='indicator_chart')
-async def generate_indicator_chart(ctx, indicator_name: str, symbol: str, interval: str = "1h", *args):
+async def generate_indicator_chart(ctx, indicator_name: str, symbol: str, interval: str = "1h", *args) -> Coroutine[Unknown, Unknown, None]:
     """Generate a chart with indicator values. TODO: Refactor with new TechnicalIndicators service."""
     await ctx.send("The 'indicator_chart' command is temporarily disabled for refactoring.")
     return
     # This command also needs significant refactoring similar to analyze_indicator
 
 @bot.command(name='help_indicators')
-async def help_indicators(ctx):
+async def help_indicators(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show available indicators and usage. TODO: Update for new TechnicalIndicators service."""
     await ctx.send("Indicator help is temporarily disabled for refactoring. Standard indicators like RSI, MACD, BB, ATR are available via analysis commands when re-enabled.")
     return
     # This needs to list indicators available from bot.indicators (TechnicalIndicators)
 
 @bot.command(name='signal')
-async def send_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%", status: str = "takeprofit", imminent: int = 1):
+async def send_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%", status: str = "takeprofit", imminent: int = 1) -> Coroutine[Unknown, Unknown, None]:
     """Send a trading signal like in the example.
     
     Parameters:
@@ -1027,7 +1027,7 @@ async def send_signal(ctx, symbol: str, strategy_code: str, entry_price: float, 
     await target_channel.send(embed=embed)
 
 @bot.command(name='sc01')
-async def sc01_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%", status: str = "takeprofit", imminent: int = 1):
+async def sc01_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%", status: str = "takeprofit", imminent: int = 1) -> Coroutine[Unknown, Unknown, None]:
     """Send an SC01 trading signal.
     
     Parameters as in //signal command
@@ -1049,7 +1049,7 @@ async def sc01_signal(ctx, symbol: str, strategy_code: str, entry_price: float, 
     await ctx.send(embed=embed)
 
 @bot.command(name='sc_add')
-async def add_sc_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%"):
+async def add_sc_signal(ctx, symbol: str, strategy_code: str, entry_price: float, tp_price: float, sl_price: float, ratio: str = "0.0%") -> Coroutine[Unknown, Unknown, None]:
     """Add an SC trading signal to the bot's database.
     
     Parameters similar to //signal command
@@ -1097,7 +1097,7 @@ async def add_sc_signal(ctx, symbol: str, strategy_code: str, entry_price: float
         await ctx.send(f"Error adding signal: {str(e)}")
 
 @bot.event
-async def on_command_error(ctx, error):
+async def on_command_error(ctx, error) -> Coroutine[Unknown, Unknown, None]:
     """Handle command errors"""
     if isinstance(error, commands.CommandNotFound):
         return
@@ -1123,7 +1123,7 @@ async def on_command_error(ctx, error):
 
 @bot.command(name='generate_signal')
 @cooldown(1, 10, BucketType.user)  # Increase cooldown to 10 seconds
-async def generate_signal(ctx, symbol: str, strategy_code: str = "SC02", risk_reward: float = 2.0):
+async def generate_signal(ctx, symbol: str, strategy_code: str = "SC02", risk_reward: float = 2.0) -> Coroutine[Unknown, Unknown, None]:
     """Generate a trading signal using the bot's strategy logic. TODO: Review strategy_manager integration."""
     
     if not bot.strategy_manager or not bot.exchange_client:
@@ -1271,7 +1271,7 @@ async def generate_signal(ctx, symbol: str, strategy_code: str = "SC02", risk_re
 
 @bot.command(name='market_signals')
 @cooldown(1, 15, BucketType.user)  # Increased cooldown to 15 seconds per user
-async def market_signals(ctx, count: int = 3):
+async def market_signals(ctx, count: int = 3) -> Coroutine[Unknown, Unknown, None]:
     """Generate multiple market signals for top configured symbols. TODO: Review strategy_manager integration."""
     if not bot.strategy_manager or not bot.exchange_client:
         await ctx.send("Trading bot components are not initialized.")
@@ -1331,7 +1331,7 @@ async def market_signals(ctx, count: int = 3):
 
 @bot.command(name='live_signal')
 @cooldown(1, 10, BucketType.user)  # Increased cooldown to 10 seconds per user
-async def live_signal(ctx, channel_id: str = None):
+async def live_signal(ctx, channel_id: str = None) -> Coroutine[Unknown, Unknown, None]:
     """Send live trading signal to specified or default channel. TODO: Review strategy_manager integration."""
     if not bot.strategy_manager or not bot.exchange_client:
         await ctx.send("Trading bot components are not initialized.")
@@ -1384,7 +1384,7 @@ async def live_signal(ctx, channel_id: str = None):
         clear_command_running(ctx.author.id, 'live_signal')
 
 @bot.command(name='risk_settings')
-async def update_risk_settings(ctx, risk_per_trade: float = None, max_daily_loss: float = None, trailing_stop: float = None):
+async def update_risk_settings(ctx, risk_per_trade: float = None, max_daily_loss: float = None, trailing_stop: float = None) -> Coroutine[Unknown, Unknown, None]:
     """Update risk management settings
     
     Parameters:
@@ -1423,7 +1423,7 @@ async def update_risk_settings(ctx, risk_per_trade: float = None, max_daily_loss
     await ctx.send(response)
 
 @bot.command(name='position_size')
-async def calculate_position_size(ctx, symbol: str, entry_price: float, stop_loss: float):
+async def calculate_position_size(ctx, symbol: str, entry_price: float, stop_loss: float) -> Coroutine[Unknown, Unknown, None]:
     """Calculate the optimal position size based on risk management
     
     Parameters:
@@ -1456,7 +1456,7 @@ async def calculate_position_size(ctx, symbol: str, entry_price: float, stop_los
         await ctx.send(f"Failed to calculate position size for {symbol}. Check if daily loss limit has been reached.")
 
 @bot.command(name='advanced_buy')
-async def advanced_buy(ctx, symbol: str, quantity: float, take_profit: float = None, stop_loss: float = None):
+async def advanced_buy(ctx, symbol: str, quantity: float, take_profit: float = None, stop_loss: float = None) -> Coroutine[Unknown, Unknown, None]:
     """Buy a cryptocurrency with take profit and stop loss orders
     
     Parameters:
@@ -1496,7 +1496,7 @@ async def advanced_buy(ctx, symbol: str, quantity: float, take_profit: float = N
 # This command is now maintained there instead.
 
 @bot.command(name='exchanges')
-async def list_exchanges(ctx):
+async def list_exchanges(ctx) -> Coroutine[Unknown, Unknown, None]:
     """List all available exchanges through CCXT"""
     try:
         # Get all exchange IDs from CCXT
@@ -1534,7 +1534,7 @@ async def list_exchanges(ctx):
 
 @bot.command(name='optimize_params')
 @cooldown(1, 60, BucketType.user)  # Limit to once per minute per user
-async def optimize_parameters(ctx, symbol: str = None, timeframe: str = '1h'):
+async def optimize_parameters(ctx, symbol: str = None, timeframe: str = '1h') -> Coroutine[Unknown, Unknown, None]:
     """
     Optimize strategy parameters using grid search.
     
@@ -1594,7 +1594,7 @@ async def optimize_parameters(ctx, symbol: str = None, timeframe: str = '1h'):
 
 @bot.command(name='genetic_optimize')
 @cooldown(1, 300, BucketType.user)  # Limit to once per 5 minutes per user
-async def genetic_optimization(ctx, symbol: str, timeframe: str = '1h', generations: int = 20):
+async def genetic_optimization(ctx, symbol: str, timeframe: str = '1h', generations: int = 20) -> Coroutine[Unknown, Unknown, None]:
     """
     Optimize strategy using genetic algorithm.
     
@@ -1659,7 +1659,7 @@ async def genetic_optimization(ctx, symbol: str, timeframe: str = '1h', generati
 
 @bot.command(name='market_regime')
 @cooldown(1, 30, BucketType.user)
-async def detect_market_regime(ctx, symbol: str, timeframe: str = '1h'):
+async def detect_market_regime(ctx, symbol: str, timeframe: str = '1h') -> Coroutine[Unknown, Unknown, None]:
     """
     Detect the current market regime and get optimized parameters.
     
@@ -1738,7 +1738,7 @@ async def detect_market_regime(ctx, symbol: str, timeframe: str = '1h'):
 
 @bot.command(name='position_size_advanced')
 @cooldown(1, 10, BucketType.user)
-async def advanced_position_size(ctx, symbol: str, account_balance: float = 1000.0, risk_percent: float = 2.0):
+async def advanced_position_size(ctx, symbol: str, account_balance: float = 1000.0, risk_percent: float = 2.0) -> Coroutine[Unknown, Unknown, None]:
     """Advanced position sizing based on volatility and account risk. TODO: Refactor with RiskManager."""
     if not bot.exchange_client or not bot.risk_manager or not bot.indicators:
         await ctx.send("Required trading components (client, risk manager, or indicators) not available.")
@@ -1840,27 +1840,27 @@ async def advanced_position_size(ctx, symbol: str, account_balance: float = 1000
         traceback.print_exc()
 
 @bot.command(name='cmdsta')
-async def command_status(ctx):
+async def command_status(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show all commands grouped by active and inactive"""
     await status_commands(ctx)
 
 @bot.command(name='actcmd')
-async def active_commands_cmd(ctx):
+async def active_commands_cmd(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show commands that have been used"""
     await active_commands(ctx)
 
 @bot.command(name='inactcmd')
-async def inactive_commands_cmd(ctx):
+async def inactive_commands_cmd(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Show commands that exist but haven't been used"""
     await inactive_commands(ctx)
 
 @bot.command(name='orders')
-async def order_history_cmd(ctx):
+async def order_history_cmd(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Display recent order history"""
     await order_history(ctx)
 
 @bot.command(name='slashinfo')
-async def slash_info(ctx):
+async def slash_info(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Check slash commands status and provide troubleshooting info"""
     try:
         embed = discord.Embed(
@@ -1930,7 +1930,7 @@ async def slash_info(ctx):
         await ctx.send(f"❌ Error getting slash command info: {str(e)}")
 
 @bot.command(name='debug_price')
-async def debug_price_responses(ctx, symbol: str = "BTC"):
+async def debug_price_responses(ctx, symbol: str = "BTC") -> Coroutine[Unknown, Unknown, None]:
     """Test and debug price responses from exchange client."""
     if not bot.exchange_client:
         await ctx.send("Exchange client not initialized.")
@@ -1957,7 +1957,7 @@ async def debug_price_responses(ctx, symbol: str = "BTC"):
         logger.error(f"Error calling `fetch_ticker({target_symbol})`: {e}")
         await ctx.send(f"❌ Error running debug: {str(e)}")
 
-def run_bot():
+def run_bot() -> None:
     """Run the Discord bot"""
     if token:
         try:

@@ -16,7 +16,7 @@ class CircuitBreaker:
     Implementation of the Circuit Breaker pattern to prevent cascade failures
     """
     
-    def __init__(self, failure_threshold=5, recovery_timeout=60):
+    def __init__(self, failure_threshold=5, recovery_timeout=60) -> None:
         """
         Initialize a circuit breaker
         
@@ -31,7 +31,7 @@ class CircuitBreaker:
         self.state = CircuitState.CLOSED
         logger.debug(f"Circuit breaker initialized: threshold={failure_threshold}, timeout={recovery_timeout}s")
     
-    def record_failure(self):
+    def record_failure(self) -> None:
         """Record a failure and possibly open the circuit"""
         self.failure_count += 1
         self.last_failure_time = time.time()
@@ -39,14 +39,14 @@ class CircuitBreaker:
         if self.failure_count >= self.failure_threshold:
             self._open_circuit()
     
-    def record_success(self):
+    def record_success(self) -> None:
         """Record a success and possibly close the circuit"""
         self.failure_count = 0
         
         if self.state == CircuitState.HALF_OPEN:
             self._close_circuit()
     
-    def allow_request(self):
+    def allow_request(self) -> bool:
         """Check if a request is allowed to proceed"""
         if self.state == CircuitState.CLOSED:
             return True
@@ -61,28 +61,28 @@ class CircuitBreaker:
         # HALF_OPEN state - allow one request to test the waters
         return True
     
-    def _open_circuit(self):
+    def _open_circuit(self) -> None:
         """Open the circuit to prevent further requests"""
         if self.state != CircuitState.OPEN:
             logger.warning(f"Opening circuit after {self.failure_count} failures")
             self.state = CircuitState.OPEN
     
-    def _half_open_circuit(self):
+    def _half_open_circuit(self) -> None:
         """Set circuit to half-open to test if service is recovered"""
         logger.info(f"Setting circuit to half-open after {self.recovery_timeout}s timeout")
         self.state = CircuitState.HALF_OPEN
     
-    def _close_circuit(self):
+    def _close_circuit(self) -> None:
         """Close the circuit to resume normal operation"""
         logger.info("Closing circuit after successful request")
         self.state = CircuitState.CLOSED
         self.failure_count = 0
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f"CircuitBreaker(state={self.state.value}, failures={self.failure_count}/{self.failure_threshold})"
 
 
-def circuit_breaker(cb=None, failure_threshold=5, recovery_timeout=60):
+def circuit_breaker(cb=None, failure_threshold=5, recovery_timeout=60) -> (func: Unknown) -> _Wrapped[Unknown, Unknown, [*args: Unknown, **kwargs: Unknown], Unknown]:
     """
     Decorator to apply circuit breaker pattern to a function
     
@@ -94,7 +94,7 @@ def circuit_breaker(cb=None, failure_threshold=5, recovery_timeout=60):
     if cb is None:
         cb = CircuitBreaker(failure_threshold, recovery_timeout)
         
-    def decorator(func):
+    def decorator(func) -> _Wrapped[Unknown, Unknown, [*args: Unknown, **kwargs: Unknown], Unknown]:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if not cb.allow_request():

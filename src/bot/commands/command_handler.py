@@ -16,7 +16,7 @@ class CommandHandler:
     Command handler to ensure all commands use the correct prefix
     """
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         """Initialize the command handler with the bot instance"""
         self.bot = bot
         self.config = get_config()
@@ -28,7 +28,7 @@ class CommandHandler:
         
         logger.info(f"Command handler initialized with prefix: {self.command_prefix}")
         
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> Coroutine[Unknown, Unknown, None]:
         """
         Intercept messages and handle command prefix issues
         
@@ -63,7 +63,7 @@ class CommandHandler:
                 await message.channel.send(embed=embed, delete_after=15)
                 logger.info(f"Informed user {message.author} about correct command prefix")
     
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> Coroutine[Unknown, Unknown, None]:
         """
         Handle command errors related to prefix issues
         """

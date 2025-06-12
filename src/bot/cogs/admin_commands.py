@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 class AdminCommands(commands.Cog):
     """Admin commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logger.info("Admin commands cog initialized")
     
     @commands.command(name="a_health")
-    async def health(self, ctx):
+    async def health(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Show bot health and status information"""
         try:
             # System info
@@ -135,7 +135,7 @@ class AdminCommands(commands.Cog):
     
     @commands.command(name="sync")
     @commands.has_permissions(administrator=True)
-    async def sync(self, ctx, guild_id: Optional[int] = None):
+    async def sync(self, ctx, guild_id: Optional[int] = None) -> Coroutine[Unknown, Unknown, None]:
         """Sync slash commands to Discord"""
         try:
             await ctx.send("⏳ Syncing slash commands to Discord...")
@@ -154,7 +154,7 @@ class AdminCommands(commands.Cog):
             await ctx.send(f"❌ Error syncing slash commands: {str(e)}")
     
     @commands.command(name="stats")
-    async def stats(self, ctx):
+    async def stats(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Show bot statistics"""
         try:
             # Bot stats
@@ -218,6 +218,6 @@ class AdminCommands(commands.Cog):
             logger.error(f"Error in stats command: {e}")
             await ctx.send(f"❌ Error fetching bot statistics: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(AdminCommands(bot))
     logger.info("Admin commands cog loaded") 

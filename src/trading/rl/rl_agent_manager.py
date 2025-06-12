@@ -34,7 +34,7 @@ class TradingCallback(BaseCallback):
     """
     Custom callback for monitoring trading performance during training.
     """
-    def __init__(self, check_freq: int, save_path: str, verbose=1):
+    def __init__(self, check_freq: int, save_path: str, verbose=1) -> None:
         super(TradingCallback, self).__init__(verbose)
         self.check_freq = check_freq
         self.save_path = save_path
@@ -73,7 +73,7 @@ class RLAgentManager:
                  exchange_client=None,
                  config: Dict[str, Any] = None,
                  models_dir: str = 'models/rl',
-                 results_dir: str = 'results/rl'):
+                 results_dir: str = 'results/rl') -> None:
         """
         Initialize the RL Agent Manager.
         
@@ -524,7 +524,7 @@ class RLAgentManager:
             logger.error(f"Error creating ensemble prediction: {e}")
             return None
     
-    def update_ensemble_weights(self, performance_metrics: Dict[str, float]):
+    def update_ensemble_weights(self, performance_metrics: Dict[str, float]) -> None:
         """
         Update ensemble weights based on agent performance.
         
@@ -562,7 +562,7 @@ class RLAgentManager:
         
         return status
     
-    def save_manager_state(self, filepath: str = None):
+    def save_manager_state(self, filepath: str = None) -> None:
         """
         Save the manager state to file.
         
@@ -589,7 +589,7 @@ class RLAgentManager:
         except Exception as e:
             logger.error(f"Error saving manager state: {e}")
     
-    def load_manager_state(self, filepath: str = None):
+    def load_manager_state(self, filepath: str = None) -> None:
         """
         Load the manager state from file.
         

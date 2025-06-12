@@ -8,11 +8,11 @@ logger = logging.getLogger('indicators')
 class Indicator:
     """Base class for technical indicators"""
     
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
         logger.info(f"Initialized {self.name} indicator")
         
-    def calculate(self, data):
+    def calculate(self, data) -> Never:
         """Calculate the indicator values
         
         Args:
@@ -23,7 +23,7 @@ class Indicator:
         """
         raise NotImplementedError("Subclasses must implement calculate()")
     
-    def get_signal(self, data):
+    def get_signal(self, data) -> Never:
         """Generate trading signals based on the indicator
         
         Args:
@@ -37,12 +37,12 @@ class Indicator:
 class EMAIndicator(Indicator):
     """Exponential Moving Average indicator"""
     
-    def __init__(self, period=20):
+    def __init__(self, period=20) -> None:
         super().__init__(f"EMA-{period}")
         self.period = period
         logger.info(f"Initialized {self.name} with period={period}")
     
-    def calculate(self, data):
+    def calculate(self, data) -> DataFrame | Series | Unknown | None:
         """Calculate EMA values
         
         Args:
@@ -66,7 +66,7 @@ class EMAIndicator(Indicator):
         # Using pandas_ta for more reliable EMA calculation
         return ta.ema(prices, length=self.period)
     
-    def get_signal(self, data, fast_period=12, slow_period=26):
+    def get_signal(self, data, fast_period=12, slow_period=26) -> DataFrame | None:
         """Generate signals based on EMA crossover
         
         Args:
@@ -108,14 +108,14 @@ class EMAIndicator(Indicator):
 class RSIIndicator(Indicator):
     """Relative Strength Index indicator"""
     
-    def __init__(self, period=14, oversold=30, overbought=70):
+    def __init__(self, period=14, oversold=30, overbought=70) -> None:
         super().__init__(f"RSI-{period}")
         self.period = period
         self.oversold = oversold
         self.overbought = overbought
         logger.info(f"Initialized {self.name} with period={period}, oversold={oversold}, overbought={overbought}")
     
-    def calculate(self, data):
+    def calculate(self, data) -> DataFrame | float | Unknown | Unknown | None:
         """Calculate RSI values
         
         Args:
@@ -139,7 +139,7 @@ class RSIIndicator(Indicator):
         # Use pandas_ta for more reliable RSI calculation
         return ta.rsi(prices, length=self.period)
     
-    def get_signal(self, data):
+    def get_signal(self, data) -> DataFrame | None:
         """Generate signals based on RSI values
         
         Args:
@@ -174,14 +174,14 @@ class RSIIndicator(Indicator):
 class MACDIndicator(Indicator):
     """Moving Average Convergence Divergence indicator"""
     
-    def __init__(self, fast_period=12, slow_period=26, signal_period=9):
+    def __init__(self, fast_period=12, slow_period=26, signal_period=9) -> None:
         super().__init__(f"MACD-{fast_period}-{slow_period}-{signal_period}")
         self.fast_period = fast_period
         self.slow_period = slow_period
         self.signal_period = signal_period
         logger.info(f"Initialized {self.name} with fast_period={fast_period}, slow_period={slow_period}, signal_period={signal_period}")
     
-    def calculate(self, data):
+    def calculate(self, data) -> DataFrame | None:
         """Calculate MACD values
         
         Args:
@@ -213,7 +213,7 @@ class MACDIndicator(Indicator):
         
         return result
     
-    def get_signal(self, data):
+    def get_signal(self, data) -> DataFrame | None:
         """Generate signals based on MACD values
         
         Args:
@@ -254,13 +254,13 @@ class MACDIndicator(Indicator):
 class BollingerBandsIndicator(Indicator):
     """Bollinger Bands indicator"""
     
-    def __init__(self, period=20, num_std=2):
+    def __init__(self, period=20, num_std=2) -> None:
         super().__init__(f"BB-{period}-{num_std}")
         self.period = period
         self.num_std = num_std
         logger.info(f"Initialized {self.name} with period={period}, num_std={num_std}")
     
-    def calculate(self, data):
+    def calculate(self, data) -> DataFrame | None:
         """Calculate Bollinger Bands values
         
         Args:
@@ -292,7 +292,7 @@ class BollingerBandsIndicator(Indicator):
         
         return result
     
-    def get_signal(self, data):
+    def get_signal(self, data) -> DataFrame | None:
         """Generate signals based on Bollinger Bands values
         
         Args:
@@ -327,7 +327,7 @@ class BollingerBandsIndicator(Indicator):
 class DualMACD_RSI_Strategy(Indicator):
     """Combined MACD and RSI strategy with dual timeframe confirmation"""
     
-    def __init__(self, rsi_period=14, fast_period=12, slow_period=26, signal_period=9, oversold=30, overbought=70):
+    def __init__(self, rsi_period=14, fast_period=12, slow_period=26, signal_period=9, oversold=30, overbought=70) -> None:
         super().__init__(f"DualMACD_RSI-{fast_period}-{slow_period}-{rsi_period}")
         self.rsi_period = rsi_period
         self.fast_period = fast_period
@@ -337,7 +337,7 @@ class DualMACD_RSI_Strategy(Indicator):
         self.overbought = overbought
         logger.info(f"Initialized {self.name} with RSI period={rsi_period}, MACD parameters={fast_period}-{slow_period}-{signal_period}")
     
-    def calculate(self, data):
+    def calculate(self, data) -> DataFrame | None:
         """Calculate MACD and RSI values for a dataframe
         
         Args:
@@ -375,7 +375,7 @@ class DualMACD_RSI_Strategy(Indicator):
         
         return result
     
-    def get_signal(self, data, higher_tf_data=None):
+    def get_signal(self, data, higher_tf_data=None) -> DataFrame | None:
         """Generate signals based on MACD and RSI with dual timeframe confirmation
         
         Args:
@@ -453,7 +453,7 @@ class IndicatorFactory:
     """Factory class to create indicator instances"""
     
     @staticmethod
-    def get_indicator(indicator_name, **params):
+    def get_indicator(indicator_name, **params) -> BollingerBandsIndicator | DualMACD_RSI_Strategy | EMAIndicator | MACDIndicator | RSIIndicator | None:
         """Get an indicator instance based on name and parameters
         
         Args:

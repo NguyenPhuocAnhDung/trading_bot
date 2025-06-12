@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import Embed
 
-async def help_command(ctx):
+async def help_command(ctx) -> Coroutine[Unknown, Unknown, None]:
     """Display help information for the trading bot"""
     
     embed = Embed(title="Trading Bot", color=0x2F3136)

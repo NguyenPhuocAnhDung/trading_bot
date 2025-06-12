@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class TradingCommands(commands.Cog):
     """Trading commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self._settings = {
             "risk_percentage": 2.0,
@@ -30,7 +30,7 @@ class TradingCommands(commands.Cog):
         logger.info("Trading commands cog initialized")
     
     @commands.command(name="t_chart")
-    async def chart(self, ctx, symbol: str):
+    async def chart(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Generate price chart for a cryptocurrency"""
         try:
             symbol = symbol.upper()
@@ -83,7 +83,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error generating chart: {str(e)}")
     
     @commands.command(name="tradesignal")
-    async def tradesignal(self, ctx, symbol: str):
+    async def tradesignal(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Get trading signals for a cryptocurrency
         
         Usage: b!tradesignal <symbol>
@@ -160,7 +160,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error generating signal: {str(e)}")
     
     @commands.command(name="signals")
-    async def signals(self, ctx):
+    async def signals(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Show recent trading signals"""
         try:
             if not self._recent_signals:
@@ -191,7 +191,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error fetching recent signals: {str(e)}")
 
     @commands.command(name="t_analyze")
-    async def analyze(self, ctx, symbol: str):
+    async def analyze(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Perform technical analysis on a cryptocurrency"""
         try:
             symbol = symbol.upper()
@@ -278,7 +278,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error performing analysis: {str(e)}")
 
     @commands.command(name="indicators")
-    async def indicators(self, ctx, symbol: str = None):
+    async def indicators(self, ctx, symbol: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Show available technical indicators or indicator values for a symbol"""
         try:
             embed = discord.Embed(
@@ -339,7 +339,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error fetching indicators: {str(e)}")
 
     @commands.command(name="buy")
-    async def buy(self, ctx, symbol: str, quantity: float):
+    async def buy(self, ctx, symbol: str, quantity: float) -> Coroutine[Unknown, Unknown, None]:
         """Buy a cryptocurrency"""
         try:
             symbol = symbol.upper()
@@ -386,7 +386,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error processing buy order: {str(e)}")
     
     @commands.command(name="sell")
-    async def sell(self, ctx, symbol: str, quantity: float):
+    async def sell(self, ctx, symbol: str, quantity: float) -> Coroutine[Unknown, Unknown, None]:
         """Sell a cryptocurrency"""
         try:
             symbol = symbol.upper()
@@ -427,7 +427,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error processing sell order: {str(e)}")
     
     @commands.command(name="balance")
-    async def balance(self, ctx):
+    async def balance(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Get account balance"""
         try:
             embed = discord.Embed(
@@ -451,7 +451,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error fetching balance: {str(e)}")
     
     @commands.command(name="risk")
-    async def risk(self, ctx, percentage: float):
+    async def risk(self, ctx, percentage: float) -> Coroutine[Unknown, Unknown, None]:
         """Set risk percentage per trade"""
         try:
             if percentage < 0.1 or percentage > 20:
@@ -488,7 +488,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error updating risk settings: {str(e)}")
     
     @commands.command(name="setdaily")
-    async def setdaily(self, ctx, percentage: float):
+    async def setdaily(self, ctx, percentage: float) -> Coroutine[Unknown, Unknown, None]:
         """Set daily loss limit percentage"""
         try:
             if percentage < 1 or percentage > 50:
@@ -525,7 +525,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error updating daily loss limit: {str(e)}")
     
     @commands.command(name="settings")
-    async def settings(self, ctx):
+    async def settings(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """View current bot settings"""
         try:
             embed = discord.Embed(
@@ -562,7 +562,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error fetching settings: {str(e)}")
     
     @commands.command(name="t_health")
-    async def health(self, ctx):
+    async def health(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Check bot health and status"""
         try:
             embed = discord.Embed(
@@ -631,7 +631,7 @@ class TradingCommands(commands.Cog):
     
     @commands.command(name="sync")
     @commands.is_owner()
-    async def sync(self, ctx, guild_id: Optional[int] = None):
+    async def sync(self, ctx, guild_id: Optional[int] = None) -> Coroutine[Unknown, Unknown, None]:
         """Sync slash commands (Admin only)"""
         try:
             if guild_id:
@@ -648,7 +648,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error syncing commands: {str(e)}")
     
     @commands.command(name="optimize")
-    async def optimize(self, ctx, symbol: str):
+    async def optimize(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Optimize strategy parameters for a symbol"""
         try:
             symbol = symbol.upper()
@@ -703,7 +703,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error optimizing strategy: {str(e)}")
     
     @commands.command(name="backtest")
-    async def backtest(self, ctx, symbol: str):
+    async def backtest(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Run a strategy backtest on a symbol"""
         try:
             symbol = symbol.upper()
@@ -782,7 +782,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error running backtest: {str(e)}")
     
     @commands.command(name="strategy")
-    async def strategy(self, ctx, name: str = None):
+    async def strategy(self, ctx, name: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Switch or view current trading strategy"""
         try:
             available_strategies = ["MACD_RSI", "BB_RSI", "EMA_Cross", "VWAP_Bounce", "Supertrend"]
@@ -876,7 +876,7 @@ class TradingCommands(commands.Cog):
             await ctx.send(f"❌ Error with strategy command: {str(e)}")
 
     @commands.command(name="signalcmd")
-    async def signal(self, ctx, symbol: str, strategy_code: str = None):
+    async def signal(self, ctx, symbol: str, strategy_code: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Generate a simple trading signal
         
         Usage: b!signalcmd <symbol> [strategy]
@@ -887,6 +887,6 @@ class TradingCommands(commands.Cog):
             logger.error(f"Error in signalcmd command: {e}")
             await ctx.send(f"❌ Error generating signal: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(TradingCommands(bot))
     logger.info("Trading commands cog loaded") 

@@ -25,7 +25,7 @@ class MultiIndicatorStrategy:
                 macd_signal: int = 9, 
                 ema_periods: List[int] = None,
                 atr_period: int = 14,
-                volume_period: int = 20):
+                volume_period: int = 20) -> None:
         """
         Initialize the strategy with parameters.
         

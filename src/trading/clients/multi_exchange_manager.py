@@ -59,7 +59,7 @@ class MultiExchangeManager:
     Handles Binance, MEXC (crypto) and MT5 (forex/CFD) simultaneously
     """
     
-    def __init__(self, config=None):
+    def __init__(self, config=None) -> None:
         self.config = config or get_config()
         self.exchanges: Dict[str, ExchangeInfo] = {}
         self.default_crypto_exchange = 'binance'
@@ -68,7 +68,7 @@ class MultiExchangeManager:
         # Initialize exchanges
         self._initialize_exchanges()
     
-    def _initialize_exchanges(self):
+    def _initialize_exchanges(self) -> None:
         """Initialize all configured exchanges"""
         logger.info("Initializing multi-exchange manager...")
         
@@ -458,7 +458,7 @@ class MultiExchangeManager:
         
         return status
     
-    async def shutdown_all(self):
+    async def shutdown_all(self) -> Coroutine[Unknown, Unknown, None]:
         """Shutdown all exchange connections"""
         for name, exchange_info in self.exchanges.items():
             if exchange_info.client and isinstance(exchange_info.client, MT5Client):
@@ -468,7 +468,7 @@ class MultiExchangeManager:
                 except Exception as e:
                     logger.error(f"Error shutting down {name}: {e}")
     
-    def __del__(self):
+    def __del__(self) -> None:
         """Cleanup on destruction"""
         # Note: This needs to be called explicitly in async context
         # asyncio.create_task(self.shutdown_all()) 

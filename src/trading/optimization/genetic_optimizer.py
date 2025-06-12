@@ -28,7 +28,7 @@ class GeneticOptimizer:
                 fitness_function: Callable = None,
                 crossover_probability: float = 0.7,
                 mutation_probability: float = 0.2,
-                tournament_size: int = 3):
+                tournament_size: int = 3) -> None:
         """
         Initialize the genetic optimizer.
         
@@ -68,7 +68,7 @@ class GeneticOptimizer:
         self.best_fitness = -float('inf')
         self.history = []
         
-    def _setup_deap(self):
+    def _setup_deap(self) -> None:
         """Set up DEAP genetic algorithm framework"""
         # Create fitness class that we want to maximize
         if not hasattr(creator, 'FitnessMax'):
@@ -108,7 +108,7 @@ class GeneticOptimizer:
             ind.append(gene)
         return ind
     
-    def _mutate_individual(self, individual):
+    def _mutate_individual(self, individual) -> tuple[Unknown]:
         """Mutate an individual by randomly changing genes"""
         for i, (name, (min_val, max_val)) in enumerate(self.parameter_ranges.items()):
             # 20% chance to mutate each gene
@@ -119,7 +119,7 @@ class GeneticOptimizer:
                     individual[i] = random.uniform(min_val, max_val)
         return individual,
     
-    def _evaluate_individual(self, individual):
+    def _evaluate_individual(self, individual) -> tuple[float] | tuple[Unknown]:
         """Convert individual to parameters dict and evaluate fitness"""
         if not self.fitness_function:
             raise ValueError("No fitness function provided")
@@ -137,7 +137,7 @@ class GeneticOptimizer:
             logger.error(f"Error evaluating individual: {e}")
             return (-float('inf'),)
     
-    def _simple_genetic_algorithm(self):
+    def _simple_genetic_algorithm(self) -> tuple[None, float]:
         """Simple genetic algorithm implementation without DEAP"""
         # Initialize population
         population = []
@@ -223,14 +223,14 @@ class GeneticOptimizer:
         # Return best individual found
         return self.best_individual, self.best_fitness
     
-    def _tournament_selection(self, fitness_scores, tournament_size=None):
+    def _tournament_selection(self, fitness_scores, tournament_size=None) -> int:
         """Tournament selection of individuals"""
         tournament_size = tournament_size or self.tournament_size
         tournament = random.sample(range(len(fitness_scores)), tournament_size)
         tournament_fitness = [fitness_scores[i] for i in tournament]
         return tournament[np.argmax(tournament_fitness)]
     
-    def _simple_crossover(self, parent1, parent2):
+    def _simple_crossover(self, parent1, parent2) -> tuple[Unknown, Unknown]:
         """Simple two-point crossover"""
         size = len(parent1)
         point1 = random.randint(0, size - 1)
@@ -335,13 +335,13 @@ class GeneticOptimizer:
         
         return result
     
-    def set_fitness_function(self, fitness_function: Callable):
+    def set_fitness_function(self, fitness_function: Callable) -> None:
         """Set the fitness function for evaluation"""
         self.fitness_function = fitness_function
         if DEAP_AVAILABLE:
             self.toolbox.register("evaluate", self._evaluate_individual)
             
-    def set_parameter_ranges(self, parameter_ranges: Dict[str, Tuple]):
+    def set_parameter_ranges(self, parameter_ranges: Dict[str, Tuple]) -> None:
         """
         Set parameter ranges for optimization.
         

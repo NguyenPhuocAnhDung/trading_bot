@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 class WebServerCommands(commands.Cog):
     """Discord commands for web server management"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.web_server_process = None
     
     web = SlashCommandGroup("web", "Web server management commands")
     
     @web.command(name="status")
-    async def web_status(self, ctx):
+    async def web_status(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Check web server status"""
         try:
             # Check if web server is running
@@ -32,7 +32,7 @@ class WebServerCommands(commands.Cog):
             await ctx.respond(f"❌ Error checking web server: {e}")
     
     @web.command(name="orders")
-    async def web_orders(self, ctx, user_id: str = None):
+    async def web_orders(self, ctx, user_id: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Check recent orders from web interface"""
         try:
             await ctx.defer()
@@ -45,7 +45,7 @@ class WebServerCommands(commands.Cog):
             await ctx.followup.send(f"❌ Error getting orders: {e}")
     
     @web.command(name="signals") 
-    async def web_signals(self, ctx):
+    async def web_signals(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Check recent TradingView signals"""
         try:
             await ctx.defer()
@@ -57,5 +57,5 @@ class WebServerCommands(commands.Cog):
         except Exception as e:
             await ctx.followup.send(f"❌ Error getting signals: {e}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(WebServerCommands(bot)) 

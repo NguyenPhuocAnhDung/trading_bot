@@ -22,12 +22,12 @@ except ImportError as e:
 class AnalysisCommands(commands.Cog):
     """Technical analysis commands for the bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logger.info("Analysis commands cog initialized")
     
     @commands.command(name="dual_macd_rsi")
-    async def dual_macd_rsi(self, ctx, symbol: str):
+    async def dual_macd_rsi(self, ctx, symbol: str) -> Coroutine[Unknown, Unknown, None]:
         """Analyze a symbol with dual timeframe MACD+RSI strategy (1h + 4h)"""
         try:
             # Setup
@@ -148,7 +148,7 @@ class AnalysisCommands(commands.Cog):
             await ctx.send(f"An error occurred while analyzing {symbol}: {str(e)}")
     
     @commands.command(name="a_indicator")
-    async def analyze_indicator(self, ctx, indicator_name: str, symbol: str, interval: str = "1h", *args):
+    async def analyze_indicator(self, ctx, indicator_name: str, symbol: str, interval: str = "1h", *args) -> Coroutine[Unknown, Unknown, None]:
         """Analyze a symbol using a specific indicator"""
         try:
             symbol = symbol.upper()
@@ -217,7 +217,7 @@ class AnalysisCommands(commands.Cog):
             await ctx.send(f"❌ Error analyzing indicator: {str(e)}")
     
     @commands.command(name="help_indicators")
-    async def help_indicators(self, ctx):
+    async def help_indicators(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Show help for indicators"""
         try:
             embed = discord.Embed(
@@ -270,6 +270,6 @@ class AnalysisCommands(commands.Cog):
             logger.error(f"Error in help_indicators command: {e}")
             await ctx.send(f"❌ Error showing indicators help: {str(e)}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     await bot.add_cog(AnalysisCommands(bot))
     logger.info("Analysis commands cog loaded") 

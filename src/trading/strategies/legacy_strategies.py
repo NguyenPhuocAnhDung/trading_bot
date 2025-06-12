@@ -7,22 +7,22 @@ logger = logging.getLogger('strategies')
 
 class TradingStrategy:
     """Base class for trading strategies"""
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
         
-    def analyze(self, data):
+    def analyze(self, data) -> Never:
         """Analyze market data and generate signals"""
         raise NotImplementedError("Subclasses must implement analyze()")
 
 class MovingAverageCrossover(TradingStrategy):
     """Simple moving average crossover strategy"""
-    def __init__(self, short_window=20, long_window=50):
+    def __init__(self, short_window=20, long_window=50) -> None:
         super().__init__("MA Crossover")
         self.short_window = short_window
         self.long_window = long_window
         logger.info(f"Initialized {self.name} strategy with short_window={short_window}, long_window={long_window}")
         
-    def analyze(self, data):
+    def analyze(self, data) -> Unknown | None:
         """
         Generate trading signals based on moving average crossovers
         
@@ -55,18 +55,18 @@ class MovingAverageCrossover(TradingStrategy):
 
 class RSIStrategy(TradingStrategy):
     """Relative Strength Index (RSI) strategy"""
-    def __init__(self, window=14, oversold=30, overbought=70):
+    def __init__(self, window=14, oversold=30, overbought=70) -> None:
         super().__init__("RSI")
         self.window = window
         self.oversold = oversold
         self.overbought = overbought
         logger.info(f"Initialized {self.name} strategy with window={window}, oversold={oversold}, overbought={overbought}")
         
-    def calculate_rsi(self, data):
+    def calculate_rsi(self, data) -> DataFrame | float | Unknown | Unknown | None:
         """Calculate RSI indicator"""
         return ta.rsi(data, length=self.window)
         
-    def analyze(self, data):
+    def analyze(self, data) -> Unknown | None:
         """
         Generate trading signals based on RSI
         
@@ -94,13 +94,13 @@ class RSIStrategy(TradingStrategy):
 
 class BollingerBandsStrategy(TradingStrategy):
     """Bollinger Bands strategy"""
-    def __init__(self, window=20, num_std=2):
+    def __init__(self, window=20, num_std=2) -> None:
         super().__init__("Bollinger Bands")
         self.window = window
         self.num_std = num_std
         logger.info(f"Initialized {self.name} strategy with window={window}, num_std={num_std}")
         
-    def analyze(self, data):
+    def analyze(self, data) -> Unknown | None:
         """
         Generate trading signals based on Bollinger Bands
         
@@ -135,7 +135,7 @@ class MACDRSIStrategy(TradingStrategy):
     """Combined MACD and RSI strategy with dual timeframe confirmation"""
     
     def __init__(self, rsi_period=14, fast_period=12, slow_period=26, signal_period=9, 
-                 oversold=30, overbought=70, use_higher_timeframe=True):
+                 oversold=30, overbought=70, use_higher_timeframe=True) -> None:
         super().__init__("MACD+RSI Dual Timeframe")
         self.rsi_period = rsi_period
         self.fast_period = fast_period
@@ -146,7 +146,7 @@ class MACDRSIStrategy(TradingStrategy):
         self.use_higher_timeframe = use_higher_timeframe
         logger.info(f"Initialized {self.name} strategy with RSI period={rsi_period}, MACD parameters={fast_period}-{slow_period}-{signal_period}")
     
-    def calculate_indicators(self, data):
+    def calculate_indicators(self, data) -> Unknown | None:
         """Calculate MACD and RSI values for a dataframe
         
         Args:
@@ -178,7 +178,7 @@ class MACDRSIStrategy(TradingStrategy):
         
         return result
     
-    def analyze(self, data, higher_tf_data=None):
+    def analyze(self, data, higher_tf_data=None) -> Unknown | None:
         """
         Generate trading signals based on MACD and RSI with dual timeframe confirmation
         
@@ -241,14 +241,14 @@ class MACDRSIStrategy(TradingStrategy):
 
 class SCStrategySignal(TradingStrategy):
     """Strategic Crypto (SC) signal strategy as shown in the example"""
-    def __init__(self, version="SC01", author="Reina"):
+    def __init__(self, version="SC01", author="Reina") -> None:
         super().__init__(f"{version} trading signals")
         self.version = version
         self.author = author
         logger.info(f"Initialized {self.name} strategy")
     
     def generate_signal(self, symbol, strategy_code, entry_price, tp_price, sl_price, 
-                       ratio="0.0%", status="takeprofit", imminent=1):
+                       ratio="0.0%", status="takeprofit", imminent=1) -> dict[str, Timestamp | int | str | Unknown]:
         """Generate a trading signal with the given parameters"""
         logger.info(f"Generating {self.name} signal for {symbol}")
         return {
@@ -264,12 +264,12 @@ class SCStrategySignal(TradingStrategy):
             'timestamp': pd.Timestamp.now()
         }
     
-    def analyze(self, data):
+    def analyze(self, data) -> None:
         """This strategy doesn't analyze data; it only generates signals from manual input"""
         logger.warning(f"{self.name} doesn't analyze data. Use generate_signal() instead.")
         return None
 
-def get_strategy(strategy_name, **kwargs):
+def get_strategy(strategy_name, **kwargs) -> BollingerBandsStrategy | MACDRSIStrategy | MovingAverageCrossover | RSIStrategy | SCStrategySignal | None:
     """Factory function to get a strategy instance"""
     strategies = {
         'ma_crossover': MovingAverageCrossover,

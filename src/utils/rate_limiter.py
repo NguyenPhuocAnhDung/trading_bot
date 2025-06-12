@@ -9,7 +9,7 @@ logger = logging.getLogger('rate_limiter')
 class RateLimiter:
     """Rate limiter for API calls to prevent throttling"""
     
-    def __init__(self, max_requests=10, per_seconds=60):
+    def __init__(self, max_requests=10, per_seconds=60) -> None:
         """
         Initialize a rate limiter
         
@@ -22,7 +22,7 @@ class RateLimiter:
         self.per_seconds = per_seconds
         logger.debug(f"Rate limiter initialized: {max_requests} requests per {per_seconds} seconds")
     
-    async def acquire(self):
+    async def acquire(self) -> Coroutine[Unknown, Unknown, ReleaseContext]:
         """
         Acquire permission to make a request
         
@@ -46,18 +46,18 @@ class RateLimiter:
         self.requests.append(time.time())
         
         class ReleaseContext:
-            def __init__(self, semaphore):
+            def __init__(self, semaphore) -> None:
                 self.semaphore = semaphore
             
             async def __aenter__(self):
                 return self
             
-            async def __aexit__(self, exc_type, exc_val, exc_tb):
+            async def __aexit__(self, exc_type, exc_val, exc_tb) -> Coroutine[Unknown, Unknown, None]:
                 self.semaphore.release()
         
         return ReleaseContext(self.semaphore)
     
-    def release(self):
+    def release(self) -> None:
         """Release a request slot"""
         self.semaphore.release()
 
@@ -65,7 +65,7 @@ class RateLimiter:
 class SyncRateLimiter:
     """Synchronous version of the rate limiter for non-async code"""
     
-    def __init__(self, max_requests=10, per_seconds=60):
+    def __init__(self, max_requests=10, per_seconds=60) -> None:
         """
         Initialize a rate limiter
         
@@ -78,7 +78,7 @@ class SyncRateLimiter:
         self.requests = deque(maxlen=max_requests)
         logger.debug(f"Sync rate limiter initialized: {max_requests} requests per {per_seconds} seconds")
     
-    def acquire(self):
+    def acquire(self) -> None:
         """
         Acquire permission to make a request (blocking)
         """

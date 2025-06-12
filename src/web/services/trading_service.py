@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 class TradingService:
     """Trading service for order execution"""
     
-    def __init__(self, config: Any):
+    def __init__(self, config: Any) -> None:
         self.config = config
         self.exchange_client = None
         self.initialized = False
     
-    async def initialize(self):
+    async def initialize(self) -> Coroutine[Unknown, Unknown, None]:
         """Initialize trading service"""
         try:
             # Initialize exchange client using existing infrastructure
@@ -33,7 +33,7 @@ class TradingService:
             logger.error(f"❌ Failed to initialize trading service: {e}")
             raise
     
-    async def close(self):
+    async def close(self) -> Coroutine[Unknown, Unknown, None]:
         """Close trading service"""
         if self.exchange_client:
             await self.exchange_client.close()

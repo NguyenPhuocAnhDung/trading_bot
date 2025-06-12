@@ -22,7 +22,7 @@ class SystemStatus(BaseModel):
     uptime: str
 
 @status_router.get("/health", response_model=SystemStatus)
-async def get_system_health():
+async def get_system_health() -> Coroutine[Unknown, Unknown, SystemStatus]:
     """Get comprehensive system health status"""
     try:
         from ..main import redis_service, trading_service, order_matching
@@ -111,7 +111,7 @@ async def get_redis_status():
         }
 
 @status_router.get("/trading")
-async def get_trading_status():
+async def get_trading_status() -> Coroutine[Unknown, Unknown, dict[str, bool | float | str | None] | dict[str, str]]:
     """Get trading service status"""
     try:
         from ..main import trading_service

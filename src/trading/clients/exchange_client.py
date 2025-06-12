@@ -45,7 +45,7 @@ class ExchangeClient:
     Includes rate limiting, retry logic, and comprehensive error handling
     """
     
-    def __init__(self, exchange_name: str = None, sandbox: bool = True, config=None, order_history: Optional[OrderHistory] = None):
+    def __init__(self, exchange_name: str = None, sandbox: bool = True, config=None, order_history: Optional[OrderHistory] = None) -> None:
         self.config = config or get_config()
         self.exchange_name = exchange_name or self.config.exchange.name
         self.sandbox = sandbox or self.config.exchange.sandbox
@@ -56,7 +56,7 @@ class ExchangeClient:
         
         self._initialize_exchange()
     
-    def _initialize_exchange(self):
+    def _initialize_exchange(self) -> None:
         """Initialize the exchange connection"""
         try:
             exchange_class = getattr(ccxt, self.exchange_name.lower())
@@ -96,7 +96,7 @@ class ExchangeClient:
             logger.error(f"Failed to initialize exchange {self.exchange_name}: {e}")
             raise
     
-    async def _rate_limit_check(self, endpoint: str = 'default'):
+    async def _rate_limit_check(self, endpoint: str = 'default') -> Coroutine[Unknown, Unknown, None]:
         """Check and enforce rate limiting"""
         now = time.time()
         last_request = self._last_request_time.get(endpoint, 0)
@@ -108,7 +108,7 @@ class ExchangeClient:
         
         self._last_request_time[endpoint] = time.time()
     
-    async def _retry_request(self, func, *args, max_retries: int = None, **kwargs):
+    async def _retry_request(self, func, *args, max_retries: int = None, **kwargs) -> Coroutine[Unknown, Unknown, Unknown | None]:
         """Execute request with retry logic"""
         max_retries = max_retries or self.config.exchange.retry_attempts
         retry_delay = self.config.exchange.retry_delay / 1000  # Convert to seconds
@@ -149,7 +149,7 @@ class ExchangeClient:
         try:
             await self._rate_limit_check('ticker')
             
-            async def _fetch():
+            async def _fetch() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.fetch_ticker(symbol)
             
             ticker = await self._retry_request(_fetch)
@@ -176,7 +176,7 @@ class ExchangeClient:
         try:
             await self._rate_limit_check('ohlcv')
             
-            async def _fetch():
+            async def _fetch() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.fetch_ohlcv(symbol, timeframe, since=since, limit=limit)
             
             ohlcv_data = await self._retry_request(_fetch)
@@ -210,7 +210,7 @@ class ExchangeClient:
         try:
             await self._rate_limit_check('multiple_tickers')
             
-            async def _fetch():
+            async def _fetch() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.fetch_tickers(symbols)
             
             tickers = await self._retry_request(_fetch)
@@ -235,7 +235,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('balance')
             
-            async def _fetch():
+            async def _fetch() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.fetch_balance()
             
             balance_data = await self._retry_request(_fetch)
@@ -272,7 +272,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('order')
             
-            async def _place_order():
+            async def _place_order() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.create_market_order(symbol, side, amount)
             
             order = await self._retry_request(_place_order)
@@ -333,7 +333,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('order')
             
-            async def _place_order():
+            async def _place_order() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.create_limit_order(symbol, side, amount, price)
             
             order = await self._retry_request(_place_order)
@@ -425,7 +425,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('oco_order')
             
-            async def _place_oco():
+            async def _place_oco() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.create_oco_order(
                     symbol, side, amount, price, stop_price, stop_limit_price
                 )
@@ -488,7 +488,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('stop_order')
             
-            async def _place_stop():
+            async def _place_stop() -> Coroutine[Unknown, Unknown, Unknown]:
                 if limit_price:
                     return self.exchange.create_stop_limit_order(symbol, side, amount, stop_price, limit_price)
                 else:
@@ -547,7 +547,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('cancel_order')
             
-            async def _cancel():
+            async def _cancel() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.cancel_order(order_id, symbol)
             
             result = await self._retry_request(_cancel)
@@ -586,7 +586,7 @@ class ExchangeClient:
             
             await self._rate_limit_check('open_orders')
             
-            async def _fetch():
+            async def _fetch() -> Coroutine[Unknown, Unknown, Unknown]:
                 return self.exchange.fetch_open_orders(symbol)
             
             orders = await self._retry_request(_fetch)

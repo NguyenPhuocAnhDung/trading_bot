@@ -28,7 +28,7 @@ class TechnicalIndicators:
     Supports multiple timeframes and advanced calculations
     """
     
-    def __init__(self, config=None):
+    def __init__(self, config=None) -> None:
         self.config = config or get_config()
         self.indicator_config = self.config.indicators
         

@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class SlashCommands(commands.Cog):
     """Slash commands for the trading bot"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         # Track processed interactions to prevent duplicate responses
         self._processed_interactions: dict[int, float] = {}
@@ -31,7 +31,7 @@ class SlashCommands(commands.Cog):
         interaction: discord.Interaction,
         symbol: str,
         exchange: Optional[Literal["binance", "coinbase", "kraken", "bybit"]] = "binance"
-    ):
+    ) -> Coroutine[Unknown, Unknown, None]:
         """Get current price for a cryptocurrency using slash command"""
         # Enhanced logging to track command execution
         logger.info(f"Price slash command triggered by {interaction.user} for {symbol} on {exchange}")
@@ -185,7 +185,7 @@ class SlashCommands(commands.Cog):
         symbol: str,
         strategy: Optional[Literal["SC01", "SC02", "SC02+FRVP"]] = "SC01",
         timeframe: Optional[Literal["1h", "4h", "1d"]] = "1h"
-    ):
+    ) -> Coroutine[Unknown, Unknown, None]:
         """Generate a trading signal using slash command"""
         # Safety check to prevent double acknowledgment
         if interaction.response.is_done():
@@ -322,7 +322,7 @@ class SlashCommands(commands.Cog):
                 logger.error(f"Failed to send error followup: {followup_error}")
     
     @app_commands.command(name="bot_stats", description="Get bot statistics and status")
-    async def stats_slash(self, interaction: discord.Interaction):
+    async def stats_slash(self, interaction: discord.Interaction) -> Coroutine[Unknown, Unknown, None]:
         """Get bot statistics using slash command"""
         # Safety check to prevent double acknowledgment
         if interaction.response.is_done():
@@ -413,7 +413,7 @@ class SlashCommands(commands.Cog):
                 logger.error(f"Failed to send error followup: {followup_error}")
     
     @app_commands.command(name="bot_help", description="Get help information for the trading bot")
-    async def help_slash(self, interaction: discord.Interaction):
+    async def help_slash(self, interaction: discord.Interaction) -> Coroutine[Unknown, Unknown, None]:
         """Display help information using slash command"""
         # Safety check to prevent double acknowledgment
         if interaction.response.is_done():
@@ -506,7 +506,7 @@ class SlashCommands(commands.Cog):
             except Exception as followup_error:
                 logger.error(f"Failed to send error followup: {followup_error}")
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     """Setup function to load the cog"""
     await bot.add_cog(SlashCommands(bot))
     logger.info("SlashCommands cog loaded successfully")

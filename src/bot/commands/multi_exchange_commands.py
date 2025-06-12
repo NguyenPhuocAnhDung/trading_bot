@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 class MultiExchangeCommands(commands.Cog):
     """Discord commands for multi-exchange functionality"""
     
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.multi_exchange_manager = None
         
-    async def cog_load(self):
+    async def cog_load(self) -> Coroutine[Unknown, Unknown, None]:
         """Initialize multi-exchange manager when cog loads"""
         try:
             self.multi_exchange_manager = MultiExchangeManager(config=self.bot.config)
@@ -33,7 +33,7 @@ class MultiExchangeCommands(commands.Cog):
     
     @commands.command(name='exchanges', aliases=['exch', 'ex'])
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def show_exchanges(self, ctx):
+    async def show_exchanges(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Display status of all configured exchanges"""
         if not self.multi_exchange_manager:
             embed = create_embed(
@@ -120,7 +120,7 @@ class MultiExchangeCommands(commands.Cog):
     
     @commands.command(name='multiprice', aliases=['mprice', 'mp'])
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def multi_exchange_price(self, ctx, symbol: str, exchange: str = None):
+    async def multi_exchange_price(self, ctx, symbol: str, exchange: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Get price from multiple exchanges or specific exchange"""
         if not self.multi_exchange_manager:
             embed = create_embed(
@@ -266,7 +266,7 @@ class MultiExchangeCommands(commands.Cog):
     
     @commands.command(name='balances', aliases=['bal', 'balance'])
     @commands.cooldown(1, 30, commands.BucketType.user)
-    async def show_balances(self, ctx, exchange: str = None):
+    async def show_balances(self, ctx, exchange: str = None) -> Coroutine[Unknown, Unknown, None]:
         """Show account balances from all exchanges or specific exchange"""
         if not self.multi_exchange_manager:
             embed = create_embed(
@@ -344,7 +344,7 @@ class MultiExchangeCommands(commands.Cog):
     
     @commands.command(name='testconn', aliases=['test'])
     @commands.cooldown(1, 30, commands.BucketType.user)
-    async def test_connections(self, ctx):
+    async def test_connections(self, ctx) -> Coroutine[Unknown, Unknown, None]:
         """Test connections to all exchanges"""
         if not self.multi_exchange_manager:
             embed = create_embed(
@@ -409,6 +409,6 @@ class MultiExchangeCommands(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-async def setup(bot):
+async def setup(bot) -> Coroutine[Unknown, Unknown, None]:
     """Setup function for loading the cog"""
     await bot.add_cog(MultiExchangeCommands(bot)) 

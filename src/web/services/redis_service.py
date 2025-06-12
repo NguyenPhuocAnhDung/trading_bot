@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class RedisService:
     """Redis service for order management"""
     
-    def __init__(self, redis_client: redis.Redis):
+    def __init__(self, redis_client: redis.Redis) -> None:
         self.redis = redis_client
         
         # Queue names
@@ -38,7 +38,7 @@ class RedisService:
             logger.error(f"❌ Redis connection failed: {e}")
             raise
     
-    async def close(self):
+    async def close(self) -> Coroutine[Unknown, Unknown, None]:
         """Close Redis connection"""
         await self.redis.aclose()
     
@@ -99,7 +99,7 @@ class RedisService:
             logger.error(f"Error getting order {order_id}: {e}")
             return None
     
-    async def update_order_status(self, order_id: str, status: str, **updates):
+    async def update_order_status(self, order_id: str, status: str, **updates) -> Coroutine[Unknown, Unknown, None]:
         """Update order status and additional fields"""
         updates["status"] = status
         updates["updated_at"] = datetime.now().isoformat()

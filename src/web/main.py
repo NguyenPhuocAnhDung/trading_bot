@@ -31,7 +31,7 @@ order_matching: OrderMatchingService = None
 trading_service: TradingService = None
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, Unknown]:
     """Application lifespan management"""
     global redis_service, order_matching, trading_service
     
@@ -98,7 +98,7 @@ app.include_router(orders_router, prefix="/orders", tags=["orders"])
 app.include_router(status_router, prefix="/status", tags=["status"])
 
 @app.get("/")
-async def root():
+async def root() -> Coroutine[Unknown, Unknown, dict[str, str]]:
     """Health check endpoint"""
     return {
         "status": "online",
@@ -107,7 +107,7 @@ async def root():
     }
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
+async def global_exception_handler(request, exc) -> Coroutine[Unknown, Unknown, JSONResponse]:
     """Global exception handler"""
     logger.error(f"Unhandled exception: {exc}")
     return JSONResponse(
@@ -115,7 +115,7 @@ async def global_exception_handler(request, exc):
         content={"error": "Internal server error"}
     )
 
-def run_server(host: str = "0.0.0.0", port: int = 8000, ssl_certfile: str = None, ssl_keyfile: str = None):
+def run_server(host: str = "0.0.0.0", port: int = 8000, ssl_certfile: str = None, ssl_keyfile: str = None) -> None:
     """Run the HTTPS server"""
     config = {
         "app": "src.web.main:app",

@@ -14,7 +14,7 @@ class TestRedisService:
     """Test cases for RedisService"""
     
     @pytest_asyncio.async_test
-    async def test_connection_test_success(self, redis_service, mock_redis):
+    async def test_connection_test_success(self, redis_service, mock_redis) -> Coroutine[Unknown, Unknown, None]:
         """Test successful Redis connection"""
         mock_redis.ping.return_value = True
         
@@ -24,7 +24,7 @@ class TestRedisService:
         mock_redis.ping.assert_called_once()
     
     @pytest_asyncio.async_test
-    async def test_add_order_success(self, redis_service, mock_redis, sample_order_request):
+    async def test_add_order_success(self, redis_service, mock_redis, sample_order_request) -> Coroutine[Unknown, Unknown, None]:
         """Test successful order addition"""
         mock_redis.hset.return_value = 1
         mock_redis.lpush.return_value = 1
@@ -40,7 +40,7 @@ class TestRedisService:
         assert mock_redis.lpush.call_count == 2  # pending queue + user queue
     
     @pytest_asyncio.async_test
-    async def test_get_order_success(self, redis_service, mock_redis, sample_order_data):
+    async def test_get_order_success(self, redis_service, mock_redis, sample_order_data) -> Coroutine[Unknown, Unknown, None]:
         """Test successful order retrieval"""
         # Mock Redis response
         redis_data = {k: json.dumps(v) if isinstance(v, (dict, list)) else str(v) 
@@ -55,7 +55,7 @@ class TestRedisService:
         mock_redis.hgetall.assert_called_once()
     
     @pytest_asyncio.async_test
-    async def test_store_tradingview_signal(self, redis_service, mock_redis, sample_tradingview_signal):
+    async def test_store_tradingview_signal(self, redis_service, mock_redis, sample_tradingview_signal) -> Coroutine[Unknown, Unknown, None]:
         """Test storing TradingView signal"""
         mock_redis.hset.return_value = 1
         mock_redis.expire.return_value = True
@@ -71,7 +71,7 @@ class TestRedisService:
         mock_redis.expire.assert_called_with(f"signal:{signal_id}", 86400)
     
     @pytest_asyncio.async_test
-    async def test_get_queue_stats(self, redis_service, mock_redis):
+    async def test_get_queue_stats(self, redis_service, mock_redis) -> Coroutine[Unknown, Unknown, None]:
         """Test getting queue statistics"""
         # Mock queue lengths
         mock_redis.llen.side_effect = [5, 3, 10, 2]  # pending, matched, executed, failed

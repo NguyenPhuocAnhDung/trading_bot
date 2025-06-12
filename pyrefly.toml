@@ -1,0 +1,5 @@
+project-includes = ["**/*"]
+project-excludes = ['**/*venv/**\*']
+
+[tool.pyrefly]
+python-path=".venv/Scripts/python.exe"

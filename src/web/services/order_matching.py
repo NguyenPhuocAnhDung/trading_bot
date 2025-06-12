@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 class OrderMatchingService:
     """Handles order matching and execution logic"""
     
-    def __init__(self, redis_service: RedisService, trading_service: TradingService):
+    def __init__(self, redis_service: RedisService, trading_service: TradingService) -> None:
         self.redis = redis_service
         self.trading = trading_service
         self.matching_loop_running = False
     
-    async def start_matching_loop(self):
+    async def start_matching_loop(self) -> Coroutine[Unknown, Unknown, None]:
         """Start the background order matching loop"""
         if self.matching_loop_running:
             logger.warning("Order matching loop already running")
@@ -37,12 +37,12 @@ class OrderMatchingService:
                 logger.error(f"❌ Error in matching loop: {e}")
                 await asyncio.sleep(5)  # Wait longer on errors
     
-    def stop_matching_loop(self):
+    def stop_matching_loop(self) -> None:
         """Stop the order matching loop"""
         self.matching_loop_running = False
         logger.info("🛑 Stopping order matching loop")
     
-    async def process_pending_orders(self):
+    async def process_pending_orders(self) -> Coroutine[Unknown, Unknown, None]:
         """Process pending orders for matching and execution"""
         try:
             pending_orders = await self.redis.get_pending_orders(limit=50)
@@ -53,7 +53,7 @@ class OrderMatchingService:
         except Exception as e:
             logger.error(f"❌ Error processing pending orders: {e}")
     
-    async def evaluate_order_for_execution(self, order: Dict[str, Any]):
+    async def evaluate_order_for_execution(self, order: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Evaluate if an order should be executed"""
         try:
             order_id = order["order_id"]
@@ -150,7 +150,7 @@ class OrderMatchingService:
             logger.error(f"❌ Error checking signal conditions: {e}")
             return False
     
-    async def execute_order(self, order: Dict[str, Any]):
+    async def execute_order(self, order: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Execute a matched order"""
         try:
             order_id = order["order_id"]
@@ -208,7 +208,7 @@ class OrderMatchingService:
                 error_message=str(e)
             )
     
-    async def create_exit_orders(self, original_order: Dict[str, Any], execution_result: Dict[str, Any]):
+    async def create_exit_orders(self, original_order: Dict[str, Any], execution_result: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Create take profit and stop loss orders"""
         try:
             symbol = original_order["symbol"]
@@ -252,7 +252,7 @@ class OrderMatchingService:
         except Exception as e:
             logger.error(f"❌ Error creating exit orders: {e}")
     
-    async def process_signal_matching(self, signal_data: Dict[str, Any], criteria: Dict[str, Any]):
+    async def process_signal_matching(self, signal_data: Dict[str, Any], criteria: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Process signal for order matching"""
         try:
             logger.info(f"🔍 Processing signal matching for {signal_data.get('symbol')}")
@@ -298,7 +298,7 @@ class OrderMatchingService:
             logger.error(f"❌ Error checking signal match: {e}")
             return False
     
-    async def execute_market_order(self, order_data: Dict[str, Any]):
+    async def execute_market_order(self, order_data: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Execute market order immediately"""
         try:
             logger.info(f"⚡ Executing market order immediately: {order_data['order_id']}")
@@ -306,7 +306,7 @@ class OrderMatchingService:
         except Exception as e:
             logger.error(f"❌ Error executing market order: {e}")
     
-    async def add_to_matching_queue(self, order_data: Dict[str, Any]):
+    async def add_to_matching_queue(self, order_data: Dict[str, Any]) -> Coroutine[Unknown, Unknown, None]:
         """Add order to matching queue for conditional execution"""
         try:
             logger.info(f"📋 Order {order_data['order_id']} added to matching queue")

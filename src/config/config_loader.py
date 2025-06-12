@@ -123,7 +123,7 @@ class BotConfig:
 class ConfigLoader:
     """Simple and functional configuration loader"""
     
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None) -> None:
         self.config_path = Path(config_path or "src/config/config.yml")
         self._config: Optional[BotConfig] = None
     
@@ -242,7 +242,7 @@ class ConfigLoader:
         
         return config
     
-    def _map_simple_configs(self, config: BotConfig, yaml_data: Dict[str, Any]):
+    def _map_simple_configs(self, config: BotConfig, yaml_data: Dict[str, Any]) -> None:
         """Map simple configuration values"""
         # Backtesting
         if bt_data := yaml_data.get('backtesting'):
@@ -263,7 +263,7 @@ class ConfigLoader:
             config.cache_enabled = perf_data.get('cache_enabled', config.cache_enabled)
             config.cache_ttl = perf_data.get('cache_ttl', config.cache_ttl)
     
-    def _apply_env_overrides(self, config: BotConfig):
+    def _apply_env_overrides(self, config: BotConfig) -> None:
         """Apply environment variable overrides"""
         # Environment variables that might override config
         env_overrides = {
@@ -283,7 +283,7 @@ class ConfigLoader:
                 except Exception as e:
                     logger.warning(f"Failed to apply env override {env_var}: {e}")
     
-    def _validate_config(self, config: BotConfig):
+    def _validate_config(self, config: BotConfig) -> None:
         """Validate configuration settings"""
         errors = []
         

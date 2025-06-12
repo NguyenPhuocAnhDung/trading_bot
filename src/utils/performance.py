@@ -7,7 +7,7 @@ from typing import Dict, List, Any, Optional
 
 logger = logging.getLogger('performance')
 
-def track_performance(func):
+def track_performance(func) -> _Wrapped[Unknown, Unknown, [*args: Unknown, **kwargs: Unknown], Unknown]:
     """
     Decorator to track function performance
     
@@ -27,14 +27,14 @@ def track_performance(func):
     return wrapper
 
 
-def async_track_performance(func):
+def async_track_performance(func) -> _Wrapped[Unknown, Unknown, [*args: Unknown, **kwargs: Unknown], Coroutine[Unknown, Unknown, Unknown]]:
     """
     Decorator to track async function performance
     
     Logs the execution time of the async function
     """
     @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs) -> Coroutine[Unknown, Unknown, Unknown]:
         start_time = time.time()
         result = await func(*args, **kwargs)
         execution_time = time.time() - start_time
@@ -50,38 +50,38 @@ def async_track_performance(func):
 class PerformanceMetrics:
     """Class to track and report performance metrics"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.metrics = {}
     
-    def record(self, name, value):
+    def record(self, name, value) -> None:
         """Record a metric value"""
         if name not in self.metrics:
             self.metrics[name] = []
         
         self.metrics[name].append(value)
     
-    def get_average(self, name):
+    def get_average(self, name) -> float | None:
         """Get the average value for a metric"""
         if name not in self.metrics or not self.metrics[name]:
             return None
         
         return sum(self.metrics[name]) / len(self.metrics[name])
     
-    def get_max(self, name):
+    def get_max(self, name) -> Unknown | None:
         """Get the maximum value for a metric"""
         if name not in self.metrics or not self.metrics[name]:
             return None
         
         return max(self.metrics[name])
     
-    def get_min(self, name):
+    def get_min(self, name) -> Unknown | None:
         """Get the minimum value for a metric"""
         if name not in self.metrics or not self.metrics[name]:
             return None
         
         return min(self.metrics[name])
     
-    def report(self):
+    def report(self) -> dict[Unknown, dict[str, float | int | Unknown]]:
         """Generate a report of all metrics"""
         report = {}
         
@@ -98,7 +98,7 @@ class PerformanceMetrics:
         
         return report
     
-    def reset(self):
+    def reset(self) -> None:
         """Reset all metrics"""
         self.metrics = {}
 
@@ -113,11 +113,11 @@ class PerformanceTracker:
     Sharpe ratio, max drawdown, win rate, etc.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the performance tracker"""
         self.reset()
         
-    def reset(self):
+    def reset(self) -> None:
         """Reset all performance metrics"""
         self.trades = []
         self.equity_curve = []
@@ -134,7 +134,7 @@ class PerformanceTracker:
                  profit_loss: float,
                  trade_type: str = 'long',
                  fees: float = 0.0,
-                 metadata: Dict = None):
+                 metadata: Dict = None) -> None:
         """
         Add a completed trade to the tracker.
         
@@ -181,7 +181,7 @@ class PerformanceTracker:
             drawdown = (peak - current) / peak if peak > 0 else 0
             self.drawdowns.append(drawdown)
             
-    def update_equity(self, current_equity: float):
+    def update_equity(self, current_equity: float) -> None:
         """
         Update equity curve without recording a trade.
         Used for tracking equity between trades.
